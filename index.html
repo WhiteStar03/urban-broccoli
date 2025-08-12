@@ -1659,11 +1659,9 @@
             testStatistics.push(testResult);
             localStorage.setItem('testStatistics', JSON.stringify(testStatistics));
             
-            // Update review section with current test
+            // Prepare review data for main test
             currentTestQuestions = questions;
-            
-            // Show results
-            alert(`Test finalizat!\n\nRezultat: ${correctCount}/${questions.length} (${percentage}%)\nTimp: ${timeStr}\n\nMergi la secțiunea "Revizuire" pentru detalii.`);
+            showMainTestResults(correctCount, percentage, timeStr);
             
             // Reset main test interface
             document.getElementById('main-test-start').style.display = 'block';
@@ -2105,8 +2103,11 @@
             testStatistics.push(testResult);
             localStorage.setItem('testStatistics', JSON.stringify(testStatistics));
             
-            // Show results
-            alert(`Test finalizat!\n\nRezultat: ${correctCount}/${customTestQuestions.length} (${percentage}%)\nTimp: ${timeStr}\n\nMergi la secțiunea "Revizuire" pentru detalii.`);
+            // Prepare review data for custom test
+            currentTestQuestions = customTestQuestions;
+            userAnswers = customAnswers;
+            flaggedQuestions = customFlaggedQuestions;
+            showCustomTestResults(correctCount, percentage, timeStr);
             
             // Reset custom test interface
             document.querySelector('.test-settings').style.display = 'block';
@@ -2114,6 +2115,7 @@
             
             // Load updated statistics
             loadStatistics();
+            switchTab('review');
         }
 
         // Show finish modal
@@ -2559,8 +2561,25 @@
             const secs = exam45Timer % 60;
             const timeStr = `${minutes}:${secs.toString().padStart(2, '0')}`;
             
-            // Show results
-            alert(`Test finalizat!\n\nRezultat: ${correctCount}/45 (${percentage}%)\nTimp: ${timeStr}\n\nMergi la secțiunea "Revizuire" pentru detalii.`);
+            // Save results to statistics
+            const testResult = {
+                date: new Date().toISOString(),
+                totalQuestions: 45,
+                correctAnswers: correctCount,
+                percentage: percentage,
+                timeSpent: exam45Timer,
+                settings: { type: 'exam_45' },
+                flaggedCount: 0
+            };
+            
+            testStatistics.push(testResult);
+            localStorage.setItem('testStatistics', JSON.stringify(testStatistics));
+            
+            // Prepare review data for exam
+            currentTestQuestions = exam45Questions;
+            userAnswers = exam45Answers;
+            flaggedQuestions = new Set(); // No flags in exam mode
+            showExamResults(correctCount, percentage, timeStr);
             
             // Reset exam interface
             document.getElementById('exam45-instructions').style.display = 'block';
@@ -2570,7 +2589,10 @@
             document.getElementById('exam45-question-card').style.display = 'none';
             document.getElementById('exam45-navigation').style.display = 'none';
             
-            // Save results to review section (optional)
+            // Load updated statistics
+            loadStatistics();
+            switchTab('review');
+        }
             // You can implement this to show exam45 results in review section
         }
 
