@@ -1208,8 +1208,8 @@
                         </div>
                     </div>
 
-                    <!-- Navigation buttons removed - auto-advance only -->
-                    <!-- Questions automatically advance after 1 minute or when answered -->
+                    <!-- Navigation buttons removed - manual button control only -->
+                    <!-- Questions advance only when user clicks the manual next buttons -->
                 </div>
             </div>
 
@@ -1280,7 +1280,7 @@
                     
                     <!-- Sort Toggle Button -->
                     <button class="btn btn-secondary" onclick="toggleSort()" id="sort-toggle-btn" style="margin-left: 10px;">
-                        🔤 Sortează Alfabetic
+                        📊 Sortează după Index
                     </button>
                 </div>
                 <div class="search-stats" id="search-stats" style="margin-bottom: 20px; padding: 10px; background: #f7f9fc; border-radius: 8px; text-align: center;">
@@ -1400,7 +1400,7 @@
 
         // Enhanced browser variables
         let browseCurrentIndex = 0;
-        let isStudyMode = true; // true = study mode, false = practice mode
+        let isStudyMode = false; // true = study mode, false = practice mode
         let practiceAnswers = {};
         let practiceAnswered = false;
 
@@ -2615,22 +2615,13 @@
                 opt.style.opacity = '0.6';
             });
             
-            // Update next button visibility
+            // Update next button visibility - this will now show manual next button
             updateNextButton();
             
             // Show timeout message
-            showNotification('⏰ Timpul a expirat pentru această întrebare!', 'warning');
+            showNotification('⏰ Timpul a expirat pentru această întrebare! Apasă butonul pentru a continua.', 'info');
             
-            // Auto-advance to next question after a short delay
-            setTimeout(() => {
-                if (customCurrentIndex < customTestQuestions.length - 1) {
-                    customCurrentIndex++;
-                    displayCustomQuestion();
-                } else {
-                    // If this was the last question, finish the test
-                    finishCustomTest();
-                }
-            }, 2000); // 2 second delay to show the timeout message
+            // NO AUTO-ADVANCE - Only manual button click advances to next question
         }
 
         function stopQuestionTimer() {
@@ -2652,6 +2643,13 @@
             const progress = ((customCurrentIndex + 1) / customTestQuestions.length) * 100;
             document.getElementById('custom-progress-fill').style.width = `${progress}%`;
             
+            // Remove any existing feedback from previous question
+            const questionCard = document.querySelector('#custom-test-interface .question-card');
+            const existingFeedback = questionCard.querySelector('div[style*="margin-top: 15px"][style*="padding: 15px"]');
+            if (existingFeedback) {
+                existingFeedback.remove();
+            }
+            
             // Display options
             const optionsContainer = document.getElementById('custom-options-container');
             optionsContainer.innerHTML = '';
@@ -2665,6 +2663,9 @@
                 optionDiv.style.cursor = 'pointer';
                 optionDiv.style.pointerEvents = 'auto';
                 optionDiv.style.opacity = '1';
+                // Reset any previous styling
+                optionDiv.style.background = '';
+                optionDiv.style.borderLeft = '';
                 
                 if (customAnswers[customCurrentIndex] === key) {
                     optionDiv.classList.add('selected');
@@ -2712,12 +2713,53 @@
             const hasAnswer = customAnswers[customCurrentIndex] !== undefined;
             
             if (hasAnswer && !isAnsweringDisabled) {
+                // Show "See correct answer" button when user has answered but time hasn't expired
                 nextButtonContainer.innerHTML = `
-                    <button class="nav-btn primary" onclick="manualNextCustomQuestion()" style="margin-top: 15px;">
-                        ➡️ Următoarea întrebare
+                    <button class="nav-btn primary" onclick="manualNextCustomQuestion()" 
+                            style="margin-top: 20px; padding: 12px 24px; font-size: 16px; font-weight: 600;
+                                   background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+                                   border: none; border-radius: 12px; color: white;
+                                   box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+                                   transition: all 0.3s ease; cursor: pointer;
+                                   transform: translateY(0);"
+                            onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(79, 70, 229, 0.5)'"
+                            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(79, 70, 229, 0.4)'">
+                        ✨ Vezi răspunsul corect
                     </button>
                 `;
+            } else if (isAnsweringDisabled) {
+                // Time expired - show "Continue to next question" button regardless of whether they answered
+                if (customCurrentIndex < customTestQuestions.length - 1) {
+                    nextButtonContainer.innerHTML = `
+                        <button class="nav-btn primary" onclick="proceedToNextQuestion()" 
+                                style="margin-top: 20px; padding: 14px 28px; font-size: 16px; font-weight: 600; 
+                                       background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); 
+                                       border: none; border-radius: 12px; color: white; 
+                                       box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+                                       transition: all 0.3s ease; cursor: pointer;
+                                       transform: translateY(0);"
+                                onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(245, 158, 11, 0.5)'"
+                                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(245, 158, 11, 0.4)'">
+                            ⏰ Continuă la următoarea întrebare
+                        </button>
+                    `;
+                } else {
+                    nextButtonContainer.innerHTML = `
+                        <button class="nav-btn primary" onclick="proceedToNextQuestion()" 
+                                style="margin-top: 20px; padding: 14px 28px; font-size: 16px; font-weight: 600; 
+                                       background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); 
+                                       border: none; border-radius: 12px; color: white; 
+                                       box-shadow: 0 4px 15px rgba(72, 187, 120, 0.4);
+                                       transition: all 0.3s ease; cursor: pointer;
+                                       transform: translateY(0);"
+                                onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(72, 187, 120, 0.5)'"
+                                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(72, 187, 120, 0.4)'">
+                            🏁 Finalizează testul
+                        </button>
+                    `;
+                }
             } else {
+                // No answer yet and time still running - hide button
                 nextButtonContainer.innerHTML = '';
             }
         }
@@ -2726,7 +2768,87 @@
             // Stop current question timer
             clearInterval(questionTimerInterval);
             
-            // Move to next question
+            // Show correct answer first
+            const currentQuestion = customTestQuestions[customCurrentIndex];
+            const userAnswer = customAnswers[customCurrentIndex];
+            const correctAnswer = currentQuestion.correct_answer;
+            const isCorrect = userAnswer === correctAnswer;
+            
+            // Highlight the correct answer and show feedback
+            document.querySelectorAll('#custom-options-container .option').forEach((opt, index) => {
+                const optionKey = ['a', 'b', 'c'][index];
+                if (optionKey === correctAnswer) {
+                    opt.style.background = '#c6f6d5';
+                    opt.style.borderLeft = '4px solid #48bb78';
+                    opt.innerHTML += '<span style="float: right; color: #276749;">✓ Corect</span>';
+                } else if (optionKey === userAnswer && !isCorrect) {
+                    opt.style.background = '#fed7d7';
+                    opt.style.borderLeft = '4px solid #f56565';
+                }
+            });
+            
+            // Create feedback message container under the options
+            const feedbackContainer = document.createElement('div');
+            feedbackContainer.style.cssText = `
+                margin-top: 15px;
+                padding: 15px;
+                border-radius: 8px;
+                text-align: center;
+                font-weight: 600;
+            `;
+            
+            if (isCorrect) {
+                feedbackContainer.style.background = '#c6f6d5';
+                feedbackContainer.style.color = '#276749';
+                feedbackContainer.innerHTML = '✅ Corect! Răspuns excelent!';
+            } else {
+                feedbackContainer.style.background = '#fed7d7';
+                feedbackContainer.style.color = '#742a2a';
+                feedbackContainer.innerHTML = `
+                    ❌ Incorect!<br>
+                    <strong>Răspunsul corect este:</strong><br>
+                    ${correctAnswer.toUpperCase()}) ${currentQuestion.options[correctAnswer]}
+                `;
+            }
+            
+            // Add feedback container to question card
+            document.querySelector('#custom-test-interface .question-card').appendChild(feedbackContainer);
+            
+            // Show beautiful "Continue" button instead of auto-advance
+            const nextButtonContainer = document.getElementById('custom-next-button-container');
+            if (customCurrentIndex < customTestQuestions.length - 1) {
+                nextButtonContainer.innerHTML = `
+                    <button class="nav-btn primary" onclick="proceedToNextQuestion()" 
+                            style="margin-top: 20px; padding: 14px 28px; font-size: 16px; font-weight: 600; 
+                                   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                                   border: none; border-radius: 12px; color: white; 
+                                   box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+                                   transition: all 0.3s ease; cursor: pointer;
+                                   transform: translateY(0);"
+                            onmouseover="this.style.transform='translateY(-2px) scale(1.02)'; this.style.boxShadow='0 8px 25px rgba(102, 126, 234, 0.6)'"
+                            onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 4px 15px rgba(102, 126, 234, 0.4)'">
+                        🚀 Continuă la următoarea întrebare
+                    </button>
+                `;
+            } else {
+                nextButtonContainer.innerHTML = `
+                    <button class="nav-btn primary" onclick="proceedToNextQuestion()" 
+                            style="margin-top: 20px; padding: 14px 28px; font-size: 16px; font-weight: 600; 
+                                   background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); 
+                                   border: none; border-radius: 12px; color: white; 
+                                   box-shadow: 0 4px 15px rgba(72, 187, 120, 0.4);
+                                   transition: all 0.3s ease; cursor: pointer;
+                                   transform: translateY(0);"
+                            onmouseover="this.style.transform='translateY(-2px) scale(1.02)'; this.style.boxShadow='0 8px 25px rgba(72, 187, 120, 0.6)'"
+                            onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 4px 15px rgba(72, 187, 120, 0.4)'">
+                        🏁 Finalizează testul
+                    </button>
+                `;
+            }
+        }
+
+        // Proceed to next question after showing feedback
+        function proceedToNextQuestion() {
             if (customCurrentIndex < customTestQuestions.length - 1) {
                 customCurrentIndex++;
                 displayCustomQuestion();
