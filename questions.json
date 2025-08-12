@@ -4121,7 +4121,7 @@
       },
       {
         "number": 413,
-        "question": "\"Formula\" corectă a decalajului de servicii este:",
+        "question": "Formula corectă a decalajului de servicii este:",
         "options": {
           "a": "decalajul de servicii = Serviciul așteptat + Serviciul perceput",
           "b": "decalajul de servicii = Serviciul perceput - Serviciul așteptat",
