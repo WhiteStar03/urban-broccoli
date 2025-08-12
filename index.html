@@ -773,6 +773,246 @@
         .difficulty-easy { background: #c6f6d5; color: #276749; }
         .difficulty-medium { background: #feebc8; color: #c05621; }
         .difficulty-hard { background: #fed7d7; color: #742a2a; }
+        
+        /* Enhanced Question Browser Slider */
+        #question-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 12px;
+            background: linear-gradient(to right, #e2e8f0 0%, #cbd5e0 100%);
+            border-radius: 10px;
+            outline: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        #question-slider:hover {
+            background: linear-gradient(to right, #cbd5e0 0%, #a0aec0 100%);
+            transform: translateY(-1px);
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1), 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+
+        #question-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            cursor: pointer;
+            border: 4px solid white;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        #question-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+            border-color: #f7fafc;
+        }
+
+        #question-slider::-webkit-slider-thumb:active {
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.6);
+        }
+
+        #question-slider::-moz-range-thumb {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            cursor: pointer;
+            border: 4px solid white;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        #question-slider::-moz-range-thumb:hover {
+            transform: scale(1.15);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        /* Enhanced progress track for the slider */
+        #question-slider::-webkit-slider-runnable-track {
+            background: linear-gradient(to right, 
+                #667eea 0%, 
+                #667eea var(--progress, 0%), 
+                #e2e8f0 var(--progress, 0%), 
+                #e2e8f0 100%
+            );
+            height: 12px;
+            border-radius: 10px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        #question-slider::-moz-range-track {
+            background: linear-gradient(to right, 
+                #667eea 0%, 
+                #667eea var(--progress, 0%), 
+                #e2e8f0 var(--progress, 0%), 
+                #e2e8f0 100%
+            );
+            height: 12px;
+            border-radius: 10px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        /* Enhanced slider container styling */
+        .slider-container {
+            position: relative;
+            padding: 15px 0;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 12px;
+            margin: 5px 0;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            font-size: 12px;
+            color: #718096;
+            font-weight: 600;
+            padding: 0 5px;
+        }
+
+        .slider-center-label {
+            position: absolute;
+            left: 50%;
+            top: -8px;
+            transform: translateX(-50%);
+            color: #667eea;
+            font-weight: bold;
+            font-size: 14px;
+            background: linear-gradient(135deg, #ffffff 0%, #f7fafc 100%);
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 2px solid #e2e8f0;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+
+        .slider-center-label:hover {
+            transform: translateX(-50%) translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .question-browser {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        /* Mode Toggle Buttons */
+        .mode-btn {
+            padding: 8px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .mode-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .mode-btn:hover:not(.active) {
+            border-color: #667eea;
+            background: #f7f9fc;
+        }
+
+        /* Test Option Cards */
+        .test-option-card {
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .test-option-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.15);
+        }
+
+        .test-option-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.1);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .test-option-card:hover::before {
+            opacity: 1;
+        }
+
+        .test-option-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .test-option-card h3 {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .test-option-card p {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .test-stats {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .test-option-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            background: white;
+            color: #4a5568;
+            width: 100%;
+            position: relative;
+            z-index: 2;
+        }
+
+        .test-option-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
     </style>
 </head>
 <body>
@@ -783,55 +1023,185 @@
         </div>
 
         <div class="nav-tabs">
-            <button class="nav-tab active" onclick="switchTab('test')">🎯 Test</button>
+            <button class="nav-tab active" onclick="switchTab('browse')">📚 Toate</button>
+            <button class="nav-tab" onclick="switchTab('test')">🧪 Test</button>
             <button class="nav-tab" onclick="switchTab('search')">🔍 Caută Întrebări</button>
-            <button class="nav-tab" onclick="switchTab('quicktest')">⚡ Test Personalizat</button>
             <button class="nav-tab" onclick="switchTab('statistics')">📈 Statistici</button>
-            <button class="nav-tab" onclick="switchTab('review')">📊 Revizuire</button>
+            <button class="nav-tab" onclick="switchTab('review')" id="review-tab" style="display: none;">📊 Revizuire</button>
         </div>
 
         <div class="content">
-            <!-- Test Section -->
-            <div id="test-section" class="section active">
-                <!-- Main Test Start Interface -->
-                <div id="main-test-start" class="start-test-section">
-                    <h3 style="margin-bottom: 20px; color: #4a5568; display: flex; align-items: center; gap: 10px;">
-                        🎯 Test Principal - Toate Întrebările cu Feedback Instant
-                    </h3>
-                    <p style="margin-bottom: 15px; color: #718096;">Testul va include toate întrebările disponibile cu feedback instant după fiecare răspuns.</p>
-                    <p style="margin-bottom: 20px; color: #718096;">Timpul va fi cronometrat automat.</p>
-                    <button class="start-btn" onclick="startMainTest()" id="start-main-test">
-                        🚀 Începe Testul
-                    </button>
-                </div>
-
-                <!-- Main Test Interface (Hidden initially) -->
-                <div id="main-test-interface" style="display: none;">
-                    <div class="test-controls">
-                        <span class="question-counter">Întrebarea <span id="current-question">1</span> din <span id="total-questions">0</span></span>
-                        <span class="timer">⏱️ <span id="timer">00:00</span></span>
+            <!-- Browse Section - Enhanced Question Browser -->
+            <div id="browse-section" class="section active">
+                <div class="question-browser">
+                    <!-- Compact Mode Toggle - Above Title -->
+                    <div style="text-align: center; margin-bottom: 15px;">
+                        <div style="display: inline-flex; gap: 8px; align-items: center; background: #f7f9fc; padding: 8px 12px; border-radius: 20px; border: 1px solid #e2e8f0;">
+                            <span style="font-size: 12px; color: #718096; font-weight: 600;">MOD:</span>
+                            <button id="study-mode-btn" class="btn btn-secondary mode-btn active" onclick="toggleToStudyMode()" 
+                                    style="font-size: 11px; padding: 4px 10px; border-radius: 12px; min-height: auto;">
+                                📖 Studiu
+                            </button>
+                            <button id="practice-mode-btn" class="btn btn-primary mode-btn" onclick="toggleToPracticeMode()"
+                                    style="font-size: 11px; padding: 4px 10px; border-radius: 12px; min-height: auto;">
+                                💪 Exersează
+                            </button>
+                        </div>
                     </div>
-
-                    <div class="progress-container">
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+                    
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <h3 style="color: #4a5568; display: flex; align-items: center; justify-content: center; gap: 10px; margin: 0;">
+                            📚 Toate Întrebările - Navighează și Învață
+                        </h3>
+                    </div>
+                    
+                    <!-- Question Navigator Slider -->
+                    <div class="question-navigator-main" style="margin-bottom: 25px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <span style="font-weight: bold; color: #4a5568;">Navigator Întrebări:</span>
+                            <span style="color: #718096;">Întrebarea <span id="browse-current">1</span> din <span id="browse-total">0</span></span>
+                        </div>
+                        
+                        <!-- Enhanced Slider for question navigation -->
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <button class="btn btn-secondary" onclick="browsePreviousQuestion()" id="browse-prev-btn" style="padding: 10px 15px; font-size: 16px;">←</button>
+                            <div style="flex: 1; position: relative;" class="slider-container">
+                                <input type="range" id="question-slider" min="1" max="1" value="1" 
+                                       style="width: 100%;"
+                                       oninput="slideToQuestionFixed(parseInt(this.value))"
+                                       onchange="slideToQuestionFixed(parseInt(this.value))">
+                                <div class="slider-labels">
+                                    <span>1</span>
+                                    <div class="slider-center-label">
+                                        Întrebarea <span id="current-slider-value">1</span>
+                                    </div>
+                                    <span id="slider-max">1</span>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary" onclick="browseNextQuestion()" id="browse-next-btn" style="padding: 10px 15px; font-size: 16px;">→</button>
                         </div>
                     </div>
 
-                    <div class="question-card">
-                        <span class="question-number" id="question-number">Întrebarea #1</span>
-                        <div class="question-text" id="question-text">
-                            Încarcă întrebările pentru a începe testul...
+                    <!-- Question Display -->
+                    <div class="question-card" style="position: relative;">
+                        <span class="question-number" id="browse-question-number">Întrebarea #1</span>
+                        <div class="question-text" id="browse-question-text">
+                            Încarcă întrebările pentru a naviga...
                         </div>
-                        <div class="options" id="options-container">
+                        <div class="options" id="browse-options-container">
                             <!-- Options will be inserted here -->
                         </div>
+                        
+                        <!-- Study Mode: Show correct answer -->
+                        <div id="browse-correct-answer" style="margin-top: 20px; padding: 15px; background: #c6f6d5; border-radius: 8px; border-left: 4px solid #48bb78;">
+                            <strong style="color: #276749;">✓ Răspuns Corect:</strong> 
+                            <span id="correct-answer-text" style="color: #22543d;"></span>
+                        </div>
+
+                        <!-- Practice Mode: Feedback area -->
+                        <div id="practice-feedback" style="margin-top: 20px; display: none;">
+                            <!-- Feedback will be shown here when answering -->
+                        </div>
+
+                        <!-- Practice Mode: Action buttons -->
+                        <div id="practice-actions" style="margin-top: 20px; text-align: center; display: none;">
+                            <button class="btn btn-primary" onclick="showAnswerInPractice()" id="show-answer-btn" style="display: none;">
+                                💡 Arată Răspunsul
+                            </button>
+                            <button class="btn btn-success" onclick="nextQuestionInPractice()" id="next-question-btn" style="display: none;">
+                                ➡️ Următoarea Întrebare
+                            </button>
+                        </div>
                     </div>
 
-                    <div class="navigation-buttons">
-                        <button class="btn btn-secondary" onclick="previousQuestion()" id="prev-btn" disabled>← Anterior</button>
-                        <button class="btn btn-primary" onclick="nextQuestion()" id="next-btn">Următoarea →</button>
-                        <button class="btn btn-success" onclick="finishMainTest()" id="finish-btn" style="display: none;">Finalizează Testul</button>
+                    <!-- Action Buttons -->
+                    <div style="display: flex; gap: 15px; justify-content: center; margin-top: 30px; flex-wrap: wrap;">
+                        <button class="btn btn-primary" onclick="startPersonalizedTestModal()" style="background: #667eea; padding: 12px 24px;">
+                            🚀 Începe Test Personalizat
+                        </button>
+                        <button class="btn btn-secondary" onclick="jumpToRandomQuestion()" style="padding: 12px 24px;">
+                            🎲 Întrebare Aleatoare
+                        </button>
+                        <button class="btn btn-secondary" onclick="resetProgress()" style="padding: 12px 24px;">
+                            🔄 Resetează Progresul
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Test Section - Dedicated Test Area -->
+            <div id="test-section" class="section">
+                <div class="test-area">
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <h2 style="color: #4a5568; margin-bottom: 15px;">🧪 Secțiunea de Test</h2>
+                        <p style="color: #718096; font-size: 16px;">Alege tipul de test pe care dorești să-l efectuezi</p>
+                    </div>
+
+                    <!-- Test Options Grid -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 30px;">
+                        <!-- Quick Start Test -->
+                        <div class="test-option-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                            <div class="test-option-icon">⚡</div>
+                            <h3>Test Rapid</h3>
+                            <p>Test cu 10 întrebări aleatorii pentru o evaluare rapidă</p>
+                            <div class="test-stats">
+                                <span>⏱️ ~5 minute</span>
+                                <span>📊 10 întrebări</span>
+                            </div>
+                            <button class="test-option-btn" onclick="startQuickTest('sprint')" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3);">
+                                Începe Test Rapid
+                            </button>
+                        </div>
+
+                        <!-- Standard Test -->
+                        <div class="test-option-card" style="background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); color: white;">
+                            <div class="test-option-icon">📝</div>
+                            <h3>Test Standard</h3>
+                            <p>Test cu 25 de întrebări pentru evaluare completă</p>
+                            <div class="test-stats">
+                                <span>⏱️ ~15 minute</span>
+                                <span>📊 25 întrebări</span>
+                            </div>
+                            <button class="test-option-btn" onclick="startQuickTest('standard')" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3);">
+                                Începe Test Standard
+                            </button>
+                        </div>
+
+                        <!-- Exam Test -->
+                        <div class="test-option-card" style="background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%); color: white;">
+                            <div class="test-option-icon">🎓</div>
+                            <h3>Test Examen</h3>
+                            <p>Test complet cu 45 de întrebări pentru simulare examen</p>
+                            <div class="test-stats">
+                                <span>⏱️ 45 minute</span>
+                                <span>📊 45 întrebări</span>
+                            </div>
+                            <button class="test-option-btn" onclick="startQuickTest('exam')" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3);">
+                                Începe Test Examen
+                            </button>
+                        </div>
+
+                        <!-- Custom Test -->
+                        <div class="test-option-card" style="background: linear-gradient(135deg, #9f7aea 0%, #805ad5 100%); color: white;">
+                            <div class="test-option-icon">⚙️</div>
+                            <h3>Test Personalizat</h3>
+                            <p>Configurează propriile setări pentru test</p>
+                            <div class="test-stats">
+                                <span>⚙️ Configurabil</span>
+                                <span>📊 La alegere</span>
+                            </div>
+                            <button class="test-option-btn" onclick="switchTab('quicktest')" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3);">
+                                Configurează Test
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Recent Results Summary -->
+                    <div style="background: #f7f9fc; border-radius: 15px; padding: 25px; margin-top: 30px;">
+                        <h3 style="color: #4a5568; margin-bottom: 15px; text-align: center;">📊 Ultimele Rezultate</h3>
+                        <div id="recent-test-summary" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                            <!-- Recent results will be populated here -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -894,6 +1264,7 @@
                             <button class="control-btn" onclick="toggleCustomNavigator()" id="custom-navigator-btn">📍 Navigator</button>
                             <button class="control-btn" onclick="flagCustomQuestion()" id="custom-flag-btn">🚩 Marchează</button>
                             <button class="control-btn" onclick="pauseCustomTest()" id="custom-pause-btn">⏸️ Pauză</button>
+                            <button class="control-btn" onclick="exitCustomTest()" id="custom-exit-btn" style="background: #f56565; color: white;">❌ Ieșire</button>
                         </div>
                     </div>
 
@@ -1101,6 +1472,19 @@
         let customNavigatorVisible = false;
         let customIsPaused = false;
 
+        // Exam45 test variables
+        let exam45Questions = [];
+        let exam45CurrentIndex = 0;
+        let exam45Answers = {};
+        let exam45Timer = 0;
+        let exam45TimerInterval;
+
+        // Enhanced browser variables
+        let browseCurrentIndex = 0;
+        let isStudyMode = true; // true = study mode, false = practice mode
+        let practiceAnswers = {};
+        let practiceAnswered = false;
+
         // Statistics
         let testStatistics = JSON.parse(localStorage.getItem('testStatistics')) || [];
 
@@ -1124,6 +1508,348 @@
                 }
             });
         });
+
+        // Initialize question browser
+        function initializeQuestionBrowser() {
+            if (questions.length === 0) {
+                // Show loading state
+                document.getElementById('browse-question-text').textContent = 'Nu există întrebări disponibile.';
+                document.getElementById('browse-options-container').innerHTML = '';
+                document.getElementById('browse-total').textContent = '0';
+                document.getElementById('question-slider').max = 1;
+                document.getElementById('slider-max').textContent = '1';
+                return;
+            }
+            
+            browseCurrentIndex = 0;
+            document.getElementById('browse-total').textContent = questions.length;
+            document.getElementById('question-slider').max = questions.length;
+            document.getElementById('question-slider').value = 1;
+            document.getElementById('slider-max').textContent = questions.length;
+            document.getElementById('current-slider-value').textContent = '1';
+            
+            displayBrowseQuestion();
+        }
+
+        // Display current question in browser mode
+        function displayBrowseQuestion() {
+            // Reset practice state for new question
+            practiceAnswered = false;
+            
+            if (questions.length === 0) {
+                document.getElementById('browse-question-text').textContent = 'Nu există întrebări disponibile.';
+                document.getElementById('browse-options-container').innerHTML = '';
+                return;
+            }
+
+            const question = questions[browseCurrentIndex];
+            document.getElementById('browse-current').textContent = browseCurrentIndex + 1;
+            document.getElementById('browse-question-number').textContent = `Întrebarea #${question.number}`;
+            document.getElementById('browse-question-text').textContent = question.question;
+            document.getElementById('question-slider').value = browseCurrentIndex + 1;
+            document.getElementById('current-slider-value').textContent = browseCurrentIndex + 1;
+            
+            // Update slider progress visually
+            const slider = document.getElementById('question-slider');
+            if (questions.length > 1) {
+                const progress = (browseCurrentIndex / (questions.length - 1)) * 100;
+                slider.style.setProperty('--progress', `${progress}%`);
+            } else {
+                slider.style.setProperty('--progress', '0%');
+            }
+            
+            // Handle different modes
+            if (isStudyMode) {
+                displayStudyMode(question);
+            } else {
+                displayPracticeMode(question);
+            }
+            
+            // Update navigation buttons
+            document.getElementById('browse-prev-btn').disabled = browseCurrentIndex === 0;
+            document.getElementById('browse-next-btn').disabled = browseCurrentIndex === questions.length - 1;
+        }
+
+        // Display question in study mode (answers visible)
+        function displayStudyMode(question) {
+            const optionsContainer = document.getElementById('browse-options-container');
+            optionsContainer.innerHTML = '';
+            
+            for (let key in question.options) {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.style.cursor = 'default'; // Not clickable in study mode
+                
+                if (key === question.correct_answer) {
+                    optionDiv.classList.add('correct');
+                }
+                
+                optionDiv.innerHTML = `
+                    <span class="option-letter">${key.toUpperCase()}</span>
+                    ${question.options[key]}
+                    ${key === question.correct_answer ? '<span style="float: right; color: #276749;">✓ Corect</span>' : ''}
+                `;
+                
+                optionsContainer.appendChild(optionDiv);
+            }
+            
+            // Show correct answer section
+            const correctAnswerKey = question.correct_answer;
+            const correctAnswerText = `${correctAnswerKey.toUpperCase()}) ${question.options[correctAnswerKey]}`;
+            document.getElementById('correct-answer-text').textContent = correctAnswerText;
+            
+            // Show/hide appropriate sections
+            document.getElementById('browse-correct-answer').style.display = 'block';
+            document.getElementById('practice-feedback').style.display = 'none';
+            document.getElementById('practice-actions').style.display = 'none';
+        }
+
+        // Display question in practice mode (interactive)
+        function displayPracticeMode(question) {
+            const optionsContainer = document.getElementById('browse-options-container');
+            optionsContainer.innerHTML = '';
+            
+            for (let key in question.options) {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.style.cursor = 'pointer'; // Clickable in practice mode
+                
+                // Check if this option was selected
+                if (practiceAnswers[browseCurrentIndex] === key) {
+                    optionDiv.classList.add('selected');
+                }
+                
+                // Add click handler for practice mode
+                optionDiv.onclick = () => selectPracticeOption(key);
+                
+                optionDiv.innerHTML = `
+                    <span class="option-letter">${key.toUpperCase()}</span>
+                    ${question.options[key]}
+                `;
+                
+                optionsContainer.appendChild(optionDiv);
+            }
+            
+            // Show/hide appropriate sections
+            document.getElementById('browse-correct-answer').style.display = 'none';
+            document.getElementById('practice-actions').style.display = 'block';
+            
+            // Update practice UI based on current state
+            updatePracticeUI();
+        }
+
+        // Select option in practice mode
+        function selectPracticeOption(option) {
+            practiceAnswers[browseCurrentIndex] = option;
+            
+            // Update visual selection
+            document.querySelectorAll('#browse-options-container .option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            document.querySelectorAll('#browse-options-container .option')[['a', 'b', 'c'].indexOf(option)].classList.add('selected');
+            
+            // Update practice UI
+            updatePracticeUI();
+            
+            showNotification(`Răspuns selectat: ${option.toUpperCase()}`, 'info');
+        }
+
+        // Navigate to previous question
+        function browsePreviousQuestion() {
+            if (browseCurrentIndex > 0) {
+                browseCurrentIndex--;
+                displayBrowseQuestion();
+            }
+        }
+
+        // Navigate to next question
+        function browseNextQuestion() {
+            if (browseCurrentIndex < questions.length - 1) {
+                browseCurrentIndex++;
+                displayBrowseQuestion();
+            }
+        }
+
+        // Slide to specific question (FIXED VERSION)
+        function slideToQuestionFixed(value) {
+            if (!value || isNaN(value) || questions.length === 0) return;
+            
+            const questionIndex = parseInt(value) - 1;
+            if (questionIndex < 0 || questionIndex >= questions.length) return;
+            
+            browseCurrentIndex = questionIndex;
+            document.getElementById('current-slider-value').textContent = value;
+            
+            // Update slider progress visually
+            const slider = document.getElementById('question-slider');
+            if (questions.length > 1) {
+                const progress = (questionIndex / (questions.length - 1)) * 100;
+                slider.style.setProperty('--progress', `${progress}%`);
+            } else {
+                slider.style.setProperty('--progress', '0%');
+            }
+            
+            displayBrowseQuestion();
+        }
+
+        // Slide to specific question (old version for compatibility)
+        function slideToQuestion(value) {
+            slideToQuestionFixed(value);
+        }
+
+        // Toggle to Study Mode - shows answers immediately
+        function toggleToStudyMode() {
+            isStudyMode = true;
+            
+            // Update button states
+            document.getElementById('study-mode-btn').classList.add('active');
+            document.getElementById('practice-mode-btn').classList.remove('active');
+            
+            // Show/hide relevant sections
+            document.getElementById('browse-correct-answer').style.display = 'block';
+            document.getElementById('practice-feedback').style.display = 'none';
+            document.getElementById('practice-actions').style.display = 'none';
+            
+            // Make options non-interactive in study mode
+            document.querySelectorAll('#browse-options-container .option').forEach(opt => {
+                opt.style.cursor = 'default';
+                opt.onclick = null;
+            });
+            
+            showNotification('📖 Modul Studiu activat - Răspunsurile sunt vizibile', 'info');
+        }
+
+        // Toggle to Practice Mode - interactive questions
+        function toggleToPracticeMode() {
+            isStudyMode = false;
+            
+            // Update button states
+            document.getElementById('study-mode-btn').classList.remove('active');
+            document.getElementById('practice-mode-btn').classList.add('active');
+            
+            // Show/hide relevant sections
+            document.getElementById('browse-correct-answer').style.display = 'none';
+            document.getElementById('practice-feedback').style.display = 'none';
+            document.getElementById('practice-actions').style.display = 'block';
+            
+            // Reset practice state for current question
+            practiceAnswered = false;
+            practiceAnswers[browseCurrentIndex] = undefined;
+            
+            // Update practice UI
+            updatePracticeUI();
+            
+            showNotification('💪 Modul Exersare activat - Testează-ți cunoștințele!', 'info');
+        }
+
+        // Show answer in practice mode
+        function showAnswerInPractice() {
+            if (questions.length === 0) return;
+            
+            const question = questions[browseCurrentIndex];
+            const userAnswer = practiceAnswers[browseCurrentIndex];
+            const correctAnswer = question.correct_answer;
+            const isCorrect = userAnswer === correctAnswer;
+            
+            // Show feedback
+            const feedbackDiv = document.getElementById('practice-feedback');
+            feedbackDiv.style.display = 'block';
+            feedbackDiv.innerHTML = `
+                <div class="feedback-message ${isCorrect ? 'feedback-correct' : 'feedback-incorrect'}">
+                    ${isCorrect ? 
+                        '✅ Corect! Răspuns excelent!' : 
+                        `❌ Incorect! Răspunsul corect este: <strong>${correctAnswer.toUpperCase()}) ${question.options[correctAnswer]}</strong>`
+                    }
+                </div>
+            `;
+            
+            // Update practice buttons
+            document.getElementById('show-answer-btn').style.display = 'none';
+            document.getElementById('next-question-btn').style.display = 'inline-block';
+            
+            // Mark as answered
+            practiceAnswered = true;
+        }
+
+        // Move to next question in practice mode
+        function nextQuestionInPractice() {
+            if (browseCurrentIndex < questions.length - 1) {
+                browseCurrentIndex++;
+                displayBrowseQuestion();
+                
+                // Reset practice state for new question
+                practiceAnswered = false;
+                updatePracticeUI();
+            } else {
+                showNotification('🎉 Ai terminat toate întrebările! Bravo!', 'success');
+            }
+        }
+
+        // Start personalized test modal/direct
+        function startPersonalizedTestModal() {
+            if (questions.length === 0) {
+                showNotification('Nu sunt întrebări disponibile!', 'error');
+                return;
+            }
+            
+            // Switch to personalized test tab
+            switchTab('quicktest');
+            showNotification('🚀 Navigator către Test Personalizat - Configurează setările tale!', 'info');
+        }
+
+        // Reset practice progress
+        function resetProgress() {
+            practiceAnswers = {};
+            practiceAnswered = false;
+            
+            // Reset current question display
+            displayBrowseQuestion();
+            updatePracticeUI();
+            
+            showNotification('🔄 Progresul de exersare a fost resetat!', 'info');
+        }
+
+        // Update practice mode UI based on current state
+        function updatePracticeUI() {
+            if (isStudyMode) return; // Only update in practice mode
+            
+            const hasAnswered = practiceAnswers[browseCurrentIndex] !== undefined;
+            const showAnswerBtn = document.getElementById('show-answer-btn');
+            const nextQuestionBtn = document.getElementById('next-question-btn');
+            const feedbackDiv = document.getElementById('practice-feedback');
+            
+            if (hasAnswered && practiceAnswered) {
+                // Already answered and feedback shown
+                showAnswerBtn.style.display = 'none';
+                nextQuestionBtn.style.display = 'inline-block';
+                feedbackDiv.style.display = 'block';
+            } else if (hasAnswered && !practiceAnswered) {
+                // Answered but feedback not shown yet
+                showAnswerBtn.style.display = 'inline-block';
+                nextQuestionBtn.style.display = 'none';
+                feedbackDiv.style.display = 'none';
+            } else {
+                // Not answered yet
+                showAnswerBtn.style.display = 'none';
+                nextQuestionBtn.style.display = 'none';
+                feedbackDiv.style.display = 'none';
+            }
+        }
+
+        // Jump to random question
+        function jumpToRandomQuestion() {
+            if (questions.length === 0) return;
+            browseCurrentIndex = Math.floor(Math.random() * questions.length);
+            displayBrowseQuestion();
+            showNotification(`Întrebare aleatoare: #${questions[browseCurrentIndex].number}`, 'info');
+        }
+
+        // Start personalized test from browser
+        function startQuickTestFromBrowser() {
+            switchTab('quicktest');
+            showNotification('Navighează la testul personalizat pentru a începe!', 'info');
+        }
 
         // Load and display statistics
         function loadStatistics() {
@@ -1224,19 +1950,9 @@
         }
 
         function updateRecommendation() {
-            const recommendation = document.getElementById('recommendation');
-            if (testStatistics.length === 0) {
-                recommendation.textContent = 'Bun venit! Îți recomandăm să începi cu testul Standard pentru a evalua nivelul tău.';
-            } else {
-                const lastTest = testStatistics[testStatistics.length - 1];
-                if (lastTest.percentage >= 80) {
-                    recommendation.textContent = 'Excelent progres! Încearcă testul Maraton pentru o provocare mai mare.';
-                } else if (lastTest.percentage >= 60) {
-                    recommendation.textContent = 'Bună performanță! Continuă cu testul Standard pentru a-ți consolida cunoștințele.';
-                } else {
-                    recommendation.textContent = 'Îți recomandăm să înveți mai mult și să începi cu testul Sprint pentru încredere.';
-                }
-            }
+            // This function is kept for compatibility but no longer needs to do anything
+            // as we removed the recommendation element from the UI
+            console.log('updateRecommendation called - no action needed');
         }
 
         // Start custom test with user settings
@@ -1531,6 +2247,10 @@
                 localStorage.setItem('questions', JSON.stringify(questions));
                 
                 initializeTest();
+                // Ensure question browser is initialized with a slight delay for DOM updates
+                setTimeout(() => {
+                    initializeQuestionBrowser();
+                }, 100);
                 showNotification('Întrebări încărcate cu succes!', 'success');
             } catch (error) {
                 console.error('Error loading questions:', error);
@@ -1540,6 +2260,10 @@
                 if (stored) {
                     questions = JSON.parse(stored);
                     initializeTest();
+                    // Ensure question browser is initialized with a slight delay for DOM updates
+                    setTimeout(() => {
+                        initializeQuestionBrowser();
+                    }, 100);
                     showNotification('Întrebări încărcate din cache!', 'warning');
                 } else {
                     showNotification('Nu s-a putut încărca questions.json. Asigură-te că fișierul există în același director.', 'error');
@@ -1661,6 +2385,9 @@
             
             // Prepare review data for main test
             currentTestQuestions = questions;
+            
+            // Show review tab and switch to it
+            document.getElementById('review-tab').style.display = 'inline-block';
             showMainTestResults(correctCount, percentage, timeStr);
             
             // Reset main test interface
@@ -1676,19 +2403,36 @@
         function initializeTest() {
             currentQuestionIndex = 0;
             userAnswers = {};
-            document.getElementById('total-questions').textContent = questions.length;
+            
+            const totalQuestionsElement = document.getElementById('total-questions');
+            if (totalQuestionsElement) {
+                totalQuestionsElement.textContent = questions.length;
+            }
             
             if (questions.length > 0) {
-                displayQuestion();
+                // Only try to display question if we're in the right context and elements exist
+                const questionTextElement = document.getElementById('question-text');
+                if (questionTextElement) {
+                    displayQuestion();
+                }
                 startTimer();
             } else {
-                document.getElementById('question-text').innerHTML = `
-                    <div style="text-align: center; color: #718096;">
-                        <p>📂 Nu există întrebări încărcate.</p>
-                        <p style="margin-top: 10px; font-size: 14px;">Adaugă un fișier <code>questions.json</code> în directorul aplicației.</p>
-                    </div>
-                `;
-                document.getElementById('options-container').innerHTML = '';
+                // Only update if elements exist
+                const questionTextElement = document.getElementById('question-text');
+                const optionsContainer = document.getElementById('options-container');
+                
+                if (questionTextElement) {
+                    questionTextElement.innerHTML = `
+                        <div style="text-align: center; color: #718096;">
+                            <p>📂 Nu există întrebări încărcate.</p>
+                            <p style="margin-top: 10px; font-size: 14px;">Adaugă un fișier <code>questions.json</code> în directorul aplicației.</p>
+                        </div>
+                    `;
+                }
+                
+                if (optionsContainer) {
+                    optionsContainer.innerHTML = '';
+                }
             }
         }
 
@@ -2058,6 +2802,27 @@
             }
         }
 
+        function exitCustomTest() {
+            if (confirm('Ești sigur că vrei să ieși din test? Progresul va fi pierdut.')) {
+                clearInterval(customTimerInterval);
+                
+                // Reset custom test interface
+                document.querySelector('.test-settings').style.display = 'block';
+                document.getElementById('custom-test-interface').style.display = 'none';
+                
+                // Reset variables
+                customTestQuestions = [];
+                customCurrentIndex = 0;
+                customAnswers = {};
+                customTimer = 0;
+                customFlaggedQuestions.clear();
+                customNavigatorVisible = false;
+                customIsPaused = false;
+                
+                showNotification('Test personalizat întrerupt', 'info');
+            }
+        }
+
         function previousCustomQuestion() {
             if (customCurrentIndex > 0) {
                 customCurrentIndex--;
@@ -2107,6 +2872,9 @@
             currentTestQuestions = customTestQuestions;
             userAnswers = customAnswers;
             flaggedQuestions = customFlaggedQuestions;
+            
+            // Show review tab and switch to it
+            document.getElementById('review-tab').style.display = 'inline-block';
             showCustomTestResults(correctCount, percentage, timeStr);
             
             // Reset custom test interface
@@ -2247,20 +3015,48 @@
             updateRecommendation();
         }
 
-        // Start new test (enhanced)
+        // Start new test (enhanced) - Now redirects to personalized test
         function startNewTest() {
-            // Reset interface
-            document.querySelector('.test-settings').style.display = 'block';
-            document.getElementById('test-interface').style.display = 'none';
+            // Hide review tab
+            document.getElementById('review-tab').style.display = 'none';
             
+            // Reset custom test interface
+            document.querySelector('.test-settings').style.display = 'block';
+            document.getElementById('custom-test-interface').style.display = 'none';
+            
+            // Clear all timers
+            clearInterval(timerInterval);
+            clearInterval(customTimerInterval);
+            clearInterval(exam45TimerInterval);
+            
+            // Reset all variables
             currentQuestionIndex = 0;
             userAnswers = {};
             flaggedQuestions.clear();
             navigatorVisible = false;
             isPaused = false;
+            seconds = 0;
             
-            switchTab('test');
+            // Reset custom test variables
+            customTestQuestions = [];
+            customCurrentIndex = 0;
+            customAnswers = {};
+            customTimer = 0;
+            customFlaggedQuestions.clear();
+            customNavigatorVisible = false;
+            customIsPaused = false;
+            
+            // Reset exam variables
+            exam45Questions = [];
+            exam45CurrentIndex = 0;
+            exam45Answers = {};
+            exam45Timer = 0;
+            
+            // Switch to personalized test tab instead of main test
+            switchTab('quicktest');
             updateRecommendation();
+            
+            showNotification('Gata pentru un test personalizat nou!', 'success');
         }
 
         // Switch between tabs (enhanced)
@@ -2273,15 +3069,17 @@
             // Find and activate the correct tab button
             const tabButtons = document.querySelectorAll('.nav-tab');
             tabButtons.forEach(tab => {
-                if (tab.textContent.includes('Test') && tabName === 'test') {
+                if (tab.textContent.includes('📚 Toate') && tabName === 'browse') {
                     tab.classList.add('active');
-                } else if (tab.textContent.includes('Caută') && tabName === 'search') {
+                } else if (tab.textContent.includes('🧪 Test') && tabName === 'test') {
                     tab.classList.add('active');
-                } else if (tab.textContent.includes('Personalizat') && tabName === 'quicktest') {
+                } else if (tab.textContent.includes('🔍 Caută') && tabName === 'search') {
                     tab.classList.add('active');
-                } else if (tab.textContent.includes('Statistici') && tabName === 'statistics') {
+                } else if (tab.textContent.includes('⚡ Test Personalizat') && tabName === 'quicktest') {
                     tab.classList.add('active');
-                } else if (tab.textContent.includes('Revizuire') && tabName === 'review') {
+                } else if (tab.textContent.includes('📈 Statistici') && tabName === 'statistics') {
+                    tab.classList.add('active');
+                } else if (tab.textContent.includes('📊 Revizuire') && tabName === 'review') {
                     tab.classList.add('active');
                 }
             });
@@ -2303,13 +3101,66 @@
             }
             
             // Load specific content for each tab
-            if (tabName === 'search') {
+            if (tabName === 'browse') {
+                // Force initialization when switching to browse tab - FIX INITIALIZATION ISSUE
+                setTimeout(() => {
+                    initializeQuestionBrowser();
+                }, 50);
+                loadRecentTestSummary();
+            } else if (tabName === 'test') {
+                loadRecentTestSummary();
+            } else if (tabName === 'search') {
                 showAllQuestions();
             } else if (tabName === 'statistics') {
                 loadStatistics();
             } else if (tabName === 'quicktest') {
                 updateRecommendation();
             }
+        }
+
+        // Load recent test summary for the test section
+        function loadRecentTestSummary() {
+            const summaryContainer = document.getElementById('recent-test-summary');
+            if (!summaryContainer) return; // Only run if we're in the test section
+            
+            const recentTests = testStatistics.slice(-4); // Get last 4 tests
+            
+            if (recentTests.length === 0) {
+                summaryContainer.innerHTML = `
+                    <div style="text-align: center; color: #718096; padding: 40px; grid-column: 1 / -1;">
+                        <p>📝 Nu ai încă teste efectuate</p>
+                        <p style="margin-top: 10px; font-size: 14px;">Începe primul tău test pentru a vedea rezultatele aici</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            summaryContainer.innerHTML = recentTests.map((test, index) => {
+                const date = new Date(test.date).toLocaleDateString('ro-RO');
+                const time = new Date(test.date).toLocaleTimeString('ro-RO', {hour: '2-digit', minute: '2-digit'});
+                const isExcellent = test.percentage >= 90;
+                const isGood = test.percentage >= 70;
+                
+                return `
+                    <div style="background: ${isExcellent ? '#c6f6d5' : isGood ? '#fefcbf' : '#fed7d7'}; 
+                               border-radius: 10px; padding: 15px; text-align: center;
+                               border-left: 4px solid ${isExcellent ? '#48bb78' : isGood ? '#d69e2e' : '#f56565'};">
+                        <div style="font-size: 24px; font-weight: bold; margin-bottom: 5px; 
+                                   color: ${isExcellent ? '#276749' : isGood ? '#744210' : '#742a2a'};">
+                            ${test.percentage}%
+                        </div>
+                        <div style="font-size: 12px; color: #4a5568; margin-bottom: 8px;">
+                            ${test.correctAnswers}/${test.totalQuestions} răspunsuri corecte
+                        </div>
+                        <div style="font-size: 11px; color: #718096;">
+                            ${date} • ${time}
+                        </div>
+                        <div style="font-size: 10px; color: #718096; margin-top: 4px;">
+                            ${Math.floor(test.timeSpent / 60)}:${(test.timeSpent % 60).toString().padStart(2, '0')} min
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
         // Close modal
@@ -2579,6 +3430,9 @@
             currentTestQuestions = exam45Questions;
             userAnswers = exam45Answers;
             flaggedQuestions = new Set(); // No flags in exam mode
+            
+            // Show review tab and switch to it
+            document.getElementById('review-tab').style.display = 'inline-block';
             showExamResults(correctCount, percentage, timeStr);
             
             // Reset exam interface
@@ -2592,8 +3446,6 @@
             // Load updated statistics
             loadStatistics();
             switchTab('review');
-        }
-            // You can implement this to show exam45 results in review section
         }
 
         // Keyboard navigation
@@ -2823,5 +3675,254 @@
             link.click();
             
             showNotification(`${questions.length} întrebări exportate în questions.json!`, 'success');
+        }
+
+        // Show main test results (replaces alert-based feedback)
+        function showMainTestResults(correctCount, percentage, timeStr) {
+            // Calculate and display detailed review
+            const reviewContainer = document.getElementById('review-list');
+            reviewContainer.innerHTML = '';
+            
+            currentTestQuestions.forEach((question, index) => {
+                const userAnswer = userAnswers[index];
+                const isCorrect = userAnswer === question.correct_answer;
+                
+                const reviewCard = document.createElement('div');
+                reviewCard.className = 'question-card slide-in';
+                reviewCard.innerHTML = `
+                    <span class="question-number">Întrebarea #${question.number}</span>
+                    ${flaggedQuestions.has(index) ? '<span class="difficulty-badge difficulty-medium" style="margin-left: 10px;">🚩 Marcată</span>' : ''}
+                    <div class="question-text">${question.question}</div>
+                    <div class="options">
+                        ${Object.entries(question.options).map(([key, value]) => {
+                            let className = 'option';
+                            if (key === question.correct_answer) className += ' correct';
+                            else if (key === userAnswer && !isCorrect) className += ' incorrect';
+                            
+                            return `
+                                <div class="${className}">
+                                    <span class="option-letter">${key.toUpperCase()}</span>
+                                    ${value}
+                                    ${key === question.correct_answer ? '<span style="float: right;">✓ Corect</span>' : ''}
+                                    ${key === userAnswer && !isCorrect ? '<span style="float: right;">✗ Răspunsul tău</span>' : ''}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                    <div style="margin-top: 15px; padding: 15px; background: ${isCorrect ? '#c6f6d5' : '#fed7d7'}; border-radius: 8px;">
+                        <strong>Status:</strong> ${isCorrect ? '✓ Corect' : '✗ Incorect'}
+                        ${!userAnswer ? ' (Fără răspuns)' : ''}
+                    </div>
+                `;
+                reviewContainer.appendChild(reviewCard);
+            });
+            
+            // Update score display
+            document.getElementById('score-display').textContent = `${correctCount}/${currentTestQuestions.length}`;
+            document.getElementById('score-percentage').textContent = `${percentage}% Corect`;
+            
+            // Enhanced summary statistics
+            const summaryHtml = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                    <div style="text-align: center; padding: 15px; background: #c6f6d5; border-radius: 8px;">
+                        <div style="font-size: 24px; font-weight: bold; color: #276749;">${correctCount}</div>
+                        <div style="color: #22543d;">Corecte</div>
+                    </div>
+                    <div style="text-align: center; padding: 15px; background: #fed7d7; border-radius: 8px;">
+                        <div style="font-size: 24px; font-weight: bold; color: #742a2a;">${currentTestQuestions.length - correctCount}</div>
+                        <div style="color: #742a2a;">Incorecte</div>
+                    </div>
+                    <div style="text-align: center; padding: 15px; background: #e2e8f0; border-radius: 8px;">
+                        <div style="font-size: 24px; font-weight: bold; color: #2d3748;">${timeStr}</div>
+                        <div style="color: #4a5568;">Timp Total</div>
+                    </div>
+                    <div style="text-align: center; padding: 15px; background: #bee3f8; border-radius: 8px;">
+                        <div style="font-size: 24px; font-weight: bold; color: #2b6cb0;">${Math.round(seconds / currentTestQuestions.length)}s</div>
+                        <div style="color: #2c5282;">Timp/Întrebare</div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; padding: 20px; background: ${percentage >= 70 ? '#c6f6d5' : '#fed7d7'}; border-radius: 10px; margin-bottom: 20px;">
+                    <h3 style="color: ${percentage >= 70 ? '#276749' : '#742a2a'};">
+                        ${percentage >= 90 ? '🏆 Excelent!' : percentage >= 70 ? '👍 Bun rezultat!' : percentage >= 50 ? '📚 Poți mai bine!' : '💪 Continuă să exersezi!'}
+                    </h3>
+                    <p style="margin-top: 10px; color: ${percentage >= 70 ? '#22543d' : '#742a2a'};">
+                        ${percentage >= 90 ? 'Performanță excepțională! Ești foarte bine pregătit.' : 
+                          percentage >= 70 ? 'Rezultat solid! Continuă să exersezi pentru perfecțiune.' :
+                          percentage >= 50 ? 'Progres bun, dar mai ai loc de îmbunătățire.' :
+                          'Recomandăm să studiezi mai mult și să reiei testul.'}
+                    </p>
+                </div>
+            `;
+            
+            reviewContainer.insertAdjacentHTML('afterbegin', summaryHtml);
+        }
+
+        // Show custom test results (replaces alert-based feedback)
+        function showCustomTestResults(correctCount, percentage, timeStr) {
+            // Calculate and display detailed review
+            const reviewContainer = document.getElementById('review-list');
+            reviewContainer.innerHTML = '';
+            
+            currentTestQuestions.forEach((question, index) => {
+                const userAnswer = userAnswers[index];
+                const isCorrect = userAnswer === question.correct_answer;
+                
+                const reviewCard = document.createElement('div');
+                reviewCard.className = 'question-card slide-in';
+                reviewCard.innerHTML = `
+                    <span class="question-number">Întrebarea #${question.number}</span>
+                    ${flaggedQuestions.has(index) ? '<span class="difficulty-badge difficulty-medium" style="margin-left: 10px;">🚩 Marcată</span>' : ''}
+                    <div class="question-text">${question.question}</div>
+                    <div class="options">
+                        ${Object.entries(question.options).map(([key, value]) => {
+                            let className = 'option';
+                            if (key === question.correct_answer) className += ' correct';
+                            else if (key === userAnswer && !isCorrect) className += ' incorrect';
+                            
+                            return `
+                                <div class="${className}">
+                                    <span class="option-letter">${key.toUpperCase()}</span>
+                                    ${value}
+                                    ${key === question.correct_answer ? '<span style="float: right;">✓ Corect</span>' : ''}
+                                    ${key === userAnswer && !isCorrect ? '<span style="float: right;">✗ Răspunsul tău</span>' : ''}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                    <div style="margin-top: 15px; padding: 15px; background: ${isCorrect ? '#c6f6d5' : '#fed7d7'}; border-radius: 8px;">
+                        <strong>Status:</strong> ${isCorrect ? '✓ Corect' : '✗ Incorect'}
+                        ${!userAnswer ? ' (Fără răspuns)' : ''}
+                    </div>
+                `;
+                reviewContainer.appendChild(reviewCard);
+            });
+            
+            // Update score display
+            document.getElementById('score-display').textContent = `${correctCount}/${currentTestQuestions.length}`;
+            document.getElementById('score-percentage').textContent = `${percentage}% Corect`;
+            
+            // Enhanced summary statistics including custom test settings
+            const summaryHtml = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                    <div style="text-align: center; padding: 15px; background: #c6f6d5; border-radius: 8px;">
+                        <div style="font-size: 24px; font-weight: bold; color: #276749;">${correctCount}</div>
+                        <div style="color: #22543d;">Corecte</div>
+                    </div>
+                    <div style="text-align: center; padding: 15px; background: #fed7d7; border-radius: 8px;">
+                        <div style="font-size: 24px; font-weight: bold; color: #742a2a;">${currentTestQuestions.length - correctCount}</div>
+                        <div style="color: #742a2a;">Incorecte</div>
+                    </div>
+                    <div style="text-align: center; padding: 15px; background: #feebc8; border-radius: 8px;">
+                        <div style="font-size: 24px; font-weight: bold; color: #c05621;">${flaggedQuestions.size}</div>
+                        <div style="color: #c05621;">Marcate</div>
+                    </div>
+                    <div style="text-align: center; padding: 15px; background: #e2e8f0; border-radius: 8px;">
+                        <div style="font-size: 24px; font-weight: bold; color: #2d3748;">${timeStr}</div>
+                        <div style="color: #4a5568;">Timp Total</div>
+                    </div>
+                    <div style="text-align: center; padding: 15px; background: #bee3f8; border-radius: 8px;">
+                        <div style="font-size: 24px; font-weight: bold; color: #2b6cb0;">${Math.round(customTimer / currentTestQuestions.length)}s</div>
+                        <div style="color: #2c5282;">Timp/Întrebare</div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; padding: 20px; background: ${percentage >= 70 ? '#c6f6d5' : '#fed7d7'}; border-radius: 10px; margin-bottom: 20px;">
+                    <h3 style="color: ${percentage >= 70 ? '#276749' : '#742a2a'};">
+                        ${percentage >= 90 ? '🏆 Excelent!' : percentage >= 70 ? '👍 Bun rezultat!' : percentage >= 50 ? '📚 Poți mai bine!' : '💪 Continuă să exersezi!'}
+                    </h3>
+                    <p style="margin-top: 10px; color: ${percentage >= 70 ? '#22543d' : '#742a2a'};">
+                        Test personalizat cu ${currentTestQuestions.length} întrebări completat cu succes!
+                    </p>
+                    <div style="margin-top: 10px; font-size: 14px; color: #4a5568;">
+                        Setări: ${customTestSettings.timeLimit > 0 ? `Limită timp ${customTestSettings.timeLimit}m` : 'Fără limită de timp'}
+                    </div>
+                </div>
+            `;
+            
+            reviewContainer.insertAdjacentHTML('afterbegin', summaryHtml);
+        }
+
+        // Show exam results (replaces alert-based feedback)
+        function showExamResults(correctCount, percentage, timeStr) {
+            // Calculate and display detailed review
+            const reviewContainer = document.getElementById('review-list');
+            reviewContainer.innerHTML = '';
+            
+            currentTestQuestions.forEach((question, index) => {
+                const userAnswer = userAnswers[index];
+                const isCorrect = userAnswer === question.correct_answer;
+                
+                const reviewCard = document.createElement('div');
+                reviewCard.className = 'question-card slide-in';
+                reviewCard.innerHTML = `
+                    <span class="question-number">Întrebarea #${question.number}</span>
+                    <div class="question-text">${question.question}</div>
+                    <div class="options">
+                        ${Object.entries(question.options).map(([key, value]) => {
+                            let className = 'option';
+                            if (key === question.correct_answer) className += ' correct';
+                            else if (key === userAnswer && !isCorrect) className += ' incorrect';
+                            
+                            return `
+                                <div class="${className}">
+                                    <span class="option-letter">${key.toUpperCase()}</span>
+                                    ${value}
+                                    ${key === question.correct_answer ? '<span style="float: right;">✓ Corect</span>' : ''}
+                                    ${key === userAnswer && !isCorrect ? '<span style="float: right;">✗ Răspunsul tău</span>' : ''}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                    <div style="margin-top: 15px; padding: 15px; background: ${isCorrect ? '#c6f6d5' : '#fed7d7'}; border-radius: 8px;">
+                        <strong>Status:</strong> ${isCorrect ? '✓ Corect' : '✗ Incorect'}
+                        ${!userAnswer ? ' (Fără răspuns)' : ''}
+                    </div>
+                `;
+                reviewContainer.appendChild(reviewCard);
+            });
+            
+            // Update score display
+            document.getElementById('score-display').textContent = `${correctCount}/45`;
+            document.getElementById('score-percentage').textContent = `${percentage}% Corect`;
+            
+            // Enhanced summary statistics for exam
+            const summaryHtml = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                    <div style="text-align: center; padding: 15px; background: #c6f6d5; border-radius: 8px;">
+                        <div style="font-size: 24px; font-weight: bold; color: #276749;">${correctCount}</div>
+                        <div style="color: #22543d;">Corecte</div>
+                    </div>
+                    <div style="text-align: center; padding: 15px; background: #fed7d7; border-radius: 8px;">
+                        <div style="font-size: 24px; font-weight: bold; color: #742a2a;">${45 - correctCount}</div>
+                        <div style="color: #742a2a;">Incorecte</div>
+                    </div>
+                    <div style="text-align: center; padding: 15px; background: #e2e8f0; border-radius: 8px;">
+                        <div style="font-size: 24px; font-weight: bold; color: #2d3748;">${timeStr}</div>
+                        <div style="color: #4a5568;">Timp Total</div>
+                    </div>
+                    <div style="text-align: center; padding: 15px; background: #bee3f8; border-radius: 8px;">
+                        <div style="font-size: 24px; font-weight: bold; color: #2b6cb0;">${Math.round(exam45Timer / 45)}s</div>
+                        <div style="color: #2c5282;">Timp/Întrebare</div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; padding: 20px; background: ${percentage >= 70 ? '#c6f6d5' : '#fed7d7'}; border-radius: 10px; margin-bottom: 20px;">
+                    <h3 style="color: ${percentage >= 70 ? '#276749' : '#742a2a'};">
+                        📝 Test cu 45 Întrebări - ${percentage >= 90 ? '🏆 Excelent!' : percentage >= 70 ? '👍 Bun rezultat!' : percentage >= 50 ? '📚 Poți mai bine!' : '💪 Continuă să exersezi!'}
+                    </h3>
+                    <p style="margin-top: 10px; color: ${percentage >= 70 ? '#22543d' : '#742a2a'};">
+                        ${percentage >= 90 ? 'Performanță excepțională la testul de evaluare!' : 
+                          percentage >= 70 ? 'Rezultat foarte bun la testul complet!' :
+                          percentage >= 50 ? 'Progres acceptabil, continuă pregătirea!' :
+                          'Mai multă pregătire este necesară pentru acest nivel.'}
+                    </p>
+                    <div style="margin-top: 10px; font-size: 14px; color: #4a5568;">
+                        Test complet cu întrebări aleatorii din baza de date
+                    </div>
+                </div>
+            `;
+            
+            reviewContainer.insertAdjacentHTML('afterbegin', summaryHtml);
         }
     </script>
