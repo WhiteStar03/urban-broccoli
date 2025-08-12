@@ -1,0 +1,1951 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplicație Test - Întrebări și Răspunsuri</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: #f7f9fc;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 15px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .nav-tab:hover {
+            background: #e2e8f0;
+        }
+
+        .nav-tab.active {
+            background: white;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .nav-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #667eea;
+        }
+
+        .content {
+            padding: 30px;
+            min-height: 500px;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* Test Section */
+        .test-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #f7f9fc;
+            border-radius: 10px;
+        }
+
+        .question-counter {
+            font-size: 18px;
+            font-weight: bold;
+            color: #4a5568;
+        }
+
+        .timer {
+            font-size: 18px;
+            color: #e53e3e;
+        }
+
+        .question-card {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+
+        .question-number {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .question-text {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            color: #2d3748;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option {
+            padding: 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            padding-left: 50px;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            background: #f7f9fc;
+        }
+
+        .option.selected {
+            border-color: #667eea;
+            background: #eef2ff;
+        }
+
+        .option.correct {
+            border-color: #48bb78;
+            background: #c6f6d5;
+        }
+
+        .option.incorrect {
+            border-color: #f56565;
+            background: #fed7d7;
+        }
+
+        .option.answer-feedback {
+            border-width: 3px;
+        }
+
+        .feedback-message {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .feedback-correct {
+            background: #c6f6d5;
+            color: #276749;
+            border: 2px solid #48bb78;
+        }
+
+        .feedback-incorrect {
+            background: #fed7d7;
+            color: #742a2a;
+            border: 2px solid #f56565;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .option-letter {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 30px;
+            height: 30px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #4a5568;
+        }
+
+        .option.selected .option-letter {
+            background: #667eea;
+            color: white;
+        }
+
+        .option.correct .option-letter {
+            background: #48bb78;
+            color: white;
+        }
+
+        .option.incorrect .option-letter {
+            background: #f56565;
+            color: white;
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
+
+        .btn-success {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #38a169;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Search Section */
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 12px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .search-results {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .search-result-card {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        .search-result-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        /* Review Section */
+        .review-summary {
+            background: #f7f9fc;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .score-display {
+            font-size: 48px;
+            font-weight: bold;
+            color: #667eea;
+            margin: 20px 0;
+        }
+
+        .review-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Add Questions Section */
+        .add-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .form-input {
+            padding: 10px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .modal h2 {
+            margin-bottom: 20px;
+            color: #2d3748;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.5em;
+            }
+            
+            .nav-tab {
+                font-size: 14px;
+                padding: 12px 8px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .question-text {
+                font-size: 16px;
+            }
+            
+            .option {
+                padding: 15px;
+                padding-left: 45px;
+            }
+        }
+
+        /* Notification animations */
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        /* File info box */
+        .file-info {
+            background: #f7f9fc;
+            border: 2px dashed #cbd5e0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .file-info code {
+            background: #2d3748;
+            color: #48bb78;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Test Settings Panel */
+        .test-settings {
+            background: linear-gradient(135deg, #f7f9fc 0%, #eef2ff 100%);
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .setting-group {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .setting-group label {
+            display: block;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .setting-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .setting-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .test-mode-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .mode-btn {
+            padding: 10px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .mode-btn:hover {
+            border-color: #667eea;
+            background: #f7f9fc;
+        }
+
+        .mode-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .start-test-section {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .start-btn {
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .start-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .start-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Question Navigator */
+        .question-navigator {
+            background: #f7f9fc;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .navigator-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .nav-question {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-question:hover {
+            border-color: #667eea;
+            background: #f7f9fc;
+        }
+
+        .nav-question.current {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .nav-question.answered {
+            background: #48bb78;
+            color: white;
+            border-color: #48bb78;
+        }
+
+        .nav-question.flagged {
+            background: #ed8936;
+            color: white;
+            border-color: #ed8936;
+        }
+
+        /* Advanced Test Controls */
+        .test-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .test-info {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .test-controls-advanced {
+            display: flex;
+            gap: 10px;
+        }
+
+        .control-btn {
+            padding: 8px 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .control-btn:hover {
+            background: #f7f9fc;
+            border-color: #667eea;
+        }
+
+        .control-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        /* Statistics Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            text-align: center;
+            border-left: 4px solid #667eea;
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #718096;
+            font-weight: 500;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .pulse {
+            animation: pulse 0.5s ease-in-out;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide-in {
+            animation: slideInUp 0.5s ease;
+        }
+
+        /* Difficulty badges */
+        .difficulty-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .difficulty-easy { background: #c6f6d5; color: #276749; }
+        .difficulty-medium { background: #feebc8; color: #c05621; }
+        .difficulty-hard { background: #fed7d7; color: #742a2a; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 Aplicație Test Interactiv</h1>
+            <p>Testează-ți cunoștințele și monitorizează progresul</p>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="switchTab('test')">🎯 Test Personalizat</button>
+            <button class="nav-tab" onclick="switchTab('search')">🔍 Caută Întrebări</button>
+            <button class="nav-tab" onclick="switchTab('quicktest')">⚡ Test Rapid</button>
+            <button class="nav-tab" onclick="switchTab('statistics')">📈 Statistici</button>
+            <button class="nav-tab" onclick="switchTab('review')">📊 Revizuire</button>
+            <button class="nav-tab" onclick="switchTab('add')">➕ Gestionare</button>
+        </div>
+
+        <div class="content">
+            <!-- Test Section -->
+            <div id="test-section" class="section active">
+                <!-- Test Settings Panel -->
+                <div class="test-settings slide-in">
+                    <h3 style="margin-bottom: 20px; color: #4a5568; display: flex; align-items: center; gap: 10px;">
+                        ⚙️ Configurare Test Personalizat
+                    </h3>
+                    
+                    <div class="settings-grid">
+                        <div class="setting-group">
+                            <label>Numărul de întrebări</label>
+                            <select class="setting-input" id="question-count">
+                                <option value="10">10 întrebări</option>
+                                <option value="15">15 întrebări</option>
+                                <option value="20">20 întrebări</option>
+                                <option value="25">25 întrebări</option>
+                                <option value="30">30 întrebări</option>
+                                <option value="45" selected>45 întrebări</option>
+                                <option value="50">50 întrebări</option>
+                                <option value="all">Toate întrebările</option>
+                            </select>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <label>Mod de afișare răspunsuri</label>
+                            <select class="setting-input" id="feedback-mode">
+                                <option value="instant">Feedback instant</option>
+                                <option value="end">La sfârșitul testului</option>
+                                <option value="none">Fără feedback</option>
+                            </select>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <label>Ordine întrebări</label>
+                            <select class="setting-input" id="question-order">
+                                <option value="random">Aleatoriu</option>
+                                <option value="sequential">Secvențial</option>
+                                <option value="reverse">Invers</option>
+                            </select>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <label>Timp limită (minute)</label>
+                            <select class="setting-input" id="time-limit">
+                                <option value="0">Fără limită</option>
+                                <option value="15">15 minute</option>
+                                <option value="30">30 minute</option>
+                                <option value="45">45 minute</option>
+                                <option value="60">60 minute</option>
+                                <option value="90">90 minute</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="start-test-section">
+                        <p style="margin-bottom: 15px; color: #718096;">Configurează setările de mai sus și începe testul</p>
+                        <button class="start-btn" onclick="startCustomTest()" id="start-custom-test">
+                            🚀 Începe Testul Personalizat
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Test Interface (Hidden initially) -->
+                <div id="test-interface" style="display: none;">
+                    <div class="test-header">
+                        <div class="test-info">
+                            <span class="question-counter">
+                                Întrebarea <span id="current-question">1</span> din <span id="total-questions">0</span>
+                            </span>
+                            <span class="timer">⏱️ <span id="timer">00:00</span></span>
+                            <span id="test-mode-indicator" class="difficulty-badge difficulty-medium">Test Personalizat</span>
+                        </div>
+                        <div class="test-controls-advanced">
+                            <button class="control-btn" onclick="toggleNavigator()" id="navigator-btn">📍 Navigator</button>
+                            <button class="control-btn" onclick="flagQuestion()" id="flag-btn">🚩 Marchează</button>
+                            <button class="control-btn" onclick="pauseTest()" id="pause-btn">⏸️ Pauză</button>
+                        </div>
+                    </div>
+
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Question Navigator (Hidden by default) -->
+                    <div class="question-navigator" id="question-navigator" style="display: none;">
+                        <h4 style="margin-bottom: 10px; color: #4a5568;">Navigator Întrebări</h4>
+                        <div class="navigator-grid" id="navigator-grid">
+                            <!-- Navigator buttons will be generated here -->
+                        </div>
+                        <div style="margin-top: 10px; font-size: 12px; color: #718096;">
+                            <span style="margin-right: 15px;">🟦 Curentă</span>
+                            <span style="margin-right: 15px;">🟩 Răspunsă</span>
+                            <span style="margin-right: 15px;">🟧 Marcată</span>
+                            <span>⬜ Nerăspunsă</span>
+                        </div>
+                    </div>
+
+                    <div class="question-card slide-in">
+                        <span class="question-number" id="question-number">Întrebarea #1</span>
+                        <div class="question-text" id="question-text">
+                            <!-- Question text -->
+                        </div>
+                        <div class="options" id="options-container">
+                            <!-- Options will be inserted here -->
+                        </div>
+                    </div>
+
+                    <div class="navigation-buttons">
+                        <button class="btn btn-secondary" onclick="previousQuestion()" id="prev-btn" disabled>← Anterior</button>
+                        <button class="btn btn-primary" onclick="nextQuestion()" id="next-btn">Următoarea →</button>
+                        <button class="btn btn-success" onclick="finishTest()" id="finish-btn" style="display: none;">Finalizează Testul</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Section -->
+            <div id="search-section" class="section">
+                <div class="search-box">
+                    <input type="text" class="search-input" id="search-input" placeholder="Caută după text întrebare sau număr...">
+                    <button class="btn btn-primary" onclick="searchQuestions()">Caută</button>
+                    <button class="btn btn-secondary" onclick="showAllQuestions()">Arată Toate</button>
+                </div>
+                <div class="search-stats" id="search-stats" style="margin-bottom: 20px; padding: 10px; background: #f7f9fc; border-radius: 8px; text-align: center;">
+                    <!-- Statistics will be shown here -->
+                </div>
+                <div class="search-results" id="search-results">
+                    <!-- Search results will appear here -->
+                </div>
+            </div>
+
+            <!-- Exam 45 Section -->
+            <div id="exam45-section" class="section">
+                <div class="exam-controls">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2>📝 Test cu 45 de Întrebări</h2>
+                        <button class="btn btn-primary" onclick="startExam45()" id="start-exam-btn">Începe Testul</button>
+                    </div>
+                    <div class="test-controls" id="exam45-controls" style="display: none;">
+                        <span class="question-counter">Întrebarea <span id="exam45-current">1</span> din <span id="exam45-total">45</span></span>
+                        <span class="timer">⏱️ <span id="exam45-timer">00:00</span></span>
+                    </div>
+                </div>
+
+                <div class="progress-container" id="exam45-progress" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="exam45-progress-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="question-card" id="exam45-question-card" style="display: none;">
+                    <span class="question-number" id="exam45-question-number">Întrebarea #1</span>
+                    <div class="question-text" id="exam45-question-text">
+                        <!-- Question text -->
+                    </div>
+                    <div class="options" id="exam45-options-container">
+                        <!-- Options will be inserted here -->
+                    </div>
+                </div>
+
+                <div class="navigation-buttons" id="exam45-navigation" style="display: none;">
+                    <button class="btn btn-secondary" onclick="exam45Previous()" id="exam45-prev-btn" disabled>← Anterior</button>
+                    <button class="btn btn-primary" onclick="exam45Next()" id="exam45-next-btn">Următoarea →</button>
+                    <button class="btn btn-success" onclick="exam45Finish()" id="exam45-finish-btn" style="display: none;">Finalizează Testul</button>
+                </div>
+
+                <div id="exam45-instructions" class="question-card" style="text-align: center;">
+                    <h3>Instrucțiuni Test</h3>
+                    <p style="margin: 20px 0;">Vei avea 45 de întrebări aleatoare din baza de date.</p>
+                    <p style="margin: 10px 0;">Poți naviga înainte și înapoi între întrebări.</p>
+                    <p style="margin: 10px 0;">Timpul va fi cronometrat automat.</p>
+                    <p style="margin: 20px 0; color: #667eea; font-weight: bold;">Apasă "Începe Testul" pentru a începe!</p>
+                </div>
+            </div>
+
+            <!-- Review Section -->
+            <div id="review-section" class="section">
+                <div class="review-summary">
+                    <h2>Rezultatul Testului</h2>
+                    <div class="score-display" id="score-display">0/0</div>
+                    <p id="score-percentage">0%</p>
+                    <button class="btn btn-primary" onclick="startNewTest()">Test Nou</button>
+                </div>
+                <div class="review-list" id="review-list">
+                    <!-- Review items will appear here -->
+                </div>
+            </div>
+
+            <!-- Add Questions Section -->
+            <div id="add-section" class="section">
+                <h2>Gestionare Întrebări</h2>
+                
+                <div class="file-info">
+                    <h3>📁 Încărcare din Fișier</h3>
+                    <p>Aplicația încarcă automat întrebările din fișierul <code>questions.json</code></p>
+                    <p style="margin-top: 10px; font-size: 14px; color: #718096;">Asigură-te că fișierul se află în același director cu pagina HTML</p>
+                    <div style="margin-top: 15px;">
+                        <button class="btn btn-primary" onclick="reloadQuestions()">🔄 Reîncarcă din questions.json</button>
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 30px;">➕ Adaugă o Întrebare Nouă Manual</h3>
+                <div class="add-form">
+                    <div class="form-group">
+                        <label>Număr Întrebare:</label>
+                        <input type="number" class="form-input" id="add-number" placeholder="Ex: 508">
+                    </div>
+                    <div class="form-group">
+                        <label>Textul Întrebării:</label>
+                        <textarea class="form-input form-textarea" id="add-question" placeholder="Introduceți textul întrebării..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Opțiunea A:</label>
+                        <input type="text" class="form-input" id="add-option-a" placeholder="Textul opțiunii A">
+                    </div>
+                    <div class="form-group">
+                        <label>Opțiunea B:</label>
+                        <input type="text" class="form-input" id="add-option-b" placeholder="Textul opțiunii B">
+                    </div>
+                    <div class="form-group">
+                        <label>Opțiunea C:</label>
+                        <input type="text" class="form-input" id="add-option-c" placeholder="Textul opțiunii C">
+                    </div>
+                    <div class="form-group">
+                        <label>Răspuns Corect:</label>
+                        <select class="form-input" id="add-correct">
+                            <option value="a">A</option>
+                            <option value="b">B</option>
+                            <option value="c">C</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" onclick="addQuestion()">Adaugă Întrebarea</button>
+                    <button class="btn btn-secondary" onclick="exportQuestions()">📥 Exportă Întrebări (JSON)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="finish-modal">
+        <div class="modal-content">
+            <h2>Confirmare Finalizare Test</h2>
+            <p>Ești sigur că vrei să finalizezi testul?</p>
+            <p>Ai răspuns la <span id="answered-count">0</span> din <span id="total-count">0</span> întrebări.</p>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" onclick="closeModal()">Continuă Testul</button>
+                <button class="btn btn-success" onclick="confirmFinishTest()">Finalizează</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let questions = [];
+        let currentQuestionIndex = 0;
+        let userAnswers = {};
+        let testMode = 'practice'; // 'practice' or 'exam'
+        let timerInterval;
+        let seconds = 0;
+        let showFeedback = true; // Control instant feedback
+        
+        // Exam 45 variables
+        let exam45Questions = [];
+        let exam45CurrentIndex = 0;
+        let exam45Answers = {};
+        let exam45Timer = 0;
+        let exam45TimerInterval;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadQuestionsFromFile();
+            
+            // Add search input event listener
+            document.getElementById('search-input').addEventListener('input', function() {
+                if (this.value.length > 2 || this.value.length === 0) {
+                    searchQuestions();
+                }
+            });
+            
+            // Add Enter key support for search
+            document.getElementById('search-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchQuestions();
+                }
+            });
+        });
+
+        // Load questions from JSON file
+        async function loadQuestionsFromFile() {
+            try {
+                const response = await fetch('questions.json');
+                if (!response.ok) {
+                    throw new Error('Failed to load questions.json');
+                }
+                questions = await response.json();
+                
+                // Store in localStorage for backup
+                localStorage.setItem('questions', JSON.stringify(questions));
+                
+                initializeTest();
+                showNotification('Întrebări încărcate cu succes!', 'success');
+            } catch (error) {
+                console.error('Error loading questions:', error);
+                
+                // Try to load from localStorage as fallback
+                const stored = localStorage.getItem('questions');
+                if (stored) {
+                    questions = JSON.parse(stored);
+                    initializeTest();
+                    showNotification('Întrebări încărcate din cache!', 'warning');
+                } else {
+                    showNotification('Nu s-a putut încărca questions.json. Asigură-te că fișierul există în același director.', 'error');
+                    document.getElementById('question-text').innerHTML = `
+                        <div style="text-align: center; color: #e53e3e;">
+                            <p>❌ Nu s-a putut încărca fișierul questions.json</p>
+                            <p style="margin-top: 10px; font-size: 14px;">Asigură-te că ai un fișier questions.json în același director cu această pagină HTML.</p>
+                            <p style="margin-top: 10px; font-size: 14px;">Format exemplu:</p>
+                            <pre style="text-align: left; background: #f7f9fc; padding: 15px; border-radius: 8px; font-size: 12px;">[
+  {
+    "number": 506,
+    "question": "Textul întrebării...",
+    "options": {
+      "a": "Opțiunea A",
+      "b": "Opțiunea B",
+      "c": "Opțiunea C"
+    },
+    "correct_answer": "b"
+  }
+]</pre>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        // Reload questions from file
+        function reloadQuestions() {
+            loadQuestionsFromFile();
+        }
+
+        // Show notification
+        function showNotification(message, type = 'info') {
+            const colors = {
+                'success': '#48bb78',
+                'error': '#f56565',
+                'warning': '#ed8936',
+                'info': '#667eea'
+            };
+            
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                background: ${colors[type]};
+                color: white;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                z-index: 2000;
+                animation: slideIn 0.3s ease;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Initialize test
+        function initializeTest() {
+            currentQuestionIndex = 0;
+            userAnswers = {};
+            document.getElementById('total-questions').textContent = questions.length;
+            document.getElementById('total-count').textContent = questions.length;
+            
+            if (questions.length > 0) {
+                displayQuestion();
+                startTimer();
+            } else {
+                document.getElementById('question-text').innerHTML = `
+                    <div style="text-align: center; color: #718096;">
+                        <p>📂 Nu există întrebări încărcate.</p>
+                        <p style="margin-top: 10px; font-size: 14px;">Adaugă un fișier <code>questions.json</code> în directorul aplicației sau adaugă întrebări manual din tab-ul "Adaugă Întrebări".</p>
+                    </div>
+                `;
+                document.getElementById('options-container').innerHTML = '';
+            }
+        }
+
+        // Timer functions
+        function startTimer() {
+            clearInterval(timerInterval);
+            seconds = 0;
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function updateTimer() {
+            seconds++;
+            const minutes = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            document.getElementById('timer').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+        }
+
+        // Display current question
+        function displayQuestion() {
+            if (questions.length === 0) {
+                document.getElementById('question-text').textContent = 'Nu există întrebări. Adaugă întrebări pentru a începe.';
+                return;
+            }
+
+            const question = questions[currentQuestionIndex];
+            document.getElementById('current-question').textContent = currentQuestionIndex + 1;
+            document.getElementById('question-number').textContent = `Întrebarea #${question.number}`;
+            document.getElementById('question-text').textContent = question.question;
+            
+            // Update progress
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            document.getElementById('progress-fill').style.width = `${progress}%`;
+            
+            // Remove any existing feedback
+            const existingFeedback = document.querySelector('.feedback-message');
+            if (existingFeedback) {
+                existingFeedback.remove();
+            }
+            
+            // Display options
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+            
+            for (let key in question.options) {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.onclick = () => selectOption(key);
+                
+                if (userAnswers[currentQuestionIndex] === key) {
+                    optionDiv.classList.add('selected');
+                    // Show feedback again if answer was already selected
+                    if (showFeedback) {
+                        setTimeout(() => showAnswerFeedback(key), 100);
+                    }
+                }
+                
+                optionDiv.innerHTML = `
+                    <span class="option-letter">${key.toUpperCase()}</span>
+                    ${question.options[key]}
+                `;
+                
+                optionsContainer.appendChild(optionDiv);
+            }
+            
+            // Update navigation buttons
+            document.getElementById('prev-btn').disabled = currentQuestionIndex === 0;
+            
+            if (currentQuestionIndex === questions.length - 1) {
+                document.getElementById('next-btn').style.display = 'none';
+                document.getElementById('finish-btn').style.display = 'inline-block';
+            } else {
+                document.getElementById('next-btn').style.display = 'inline-block';
+                document.getElementById('finish-btn').style.display = 'none';
+            }
+        }
+
+        // Select an option
+        function selectOption(option) {
+            userAnswers[currentQuestionIndex] = option;
+            
+            // Update visual selection
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            document.querySelectorAll('.option')[['a', 'b', 'c'].indexOf(option)].classList.add('selected');
+            
+            // Show instant feedback if enabled
+            if (showFeedback) {
+                showAnswerFeedback(option);
+            }
+        }
+
+        // Show answer feedback
+        function showAnswerFeedback(selectedOption) {
+            const question = questions[currentQuestionIndex];
+            const correctAnswer = question.correct_answer;
+            const isCorrect = selectedOption === correctAnswer;
+            
+            // Remove any existing feedback
+            const existingFeedback = document.querySelector('.feedback-message');
+            if (existingFeedback) {
+                existingFeedback.remove();
+            }
+            
+            // Highlight correct and incorrect options
+            document.querySelectorAll('.option').forEach((opt, index) => {
+                const optionKey = ['a', 'b', 'c'][index];
+                opt.classList.remove('answer-feedback');
+                
+                if (optionKey === correctAnswer) {
+                    opt.classList.add('correct', 'answer-feedback');
+                } else if (optionKey === selectedOption && !isCorrect) {
+                    opt.classList.add('incorrect', 'answer-feedback');
+                }
+            });
+            
+            // Show feedback message
+            const feedbackDiv = document.createElement('div');
+            feedbackDiv.className = `feedback-message ${isCorrect ? 'feedback-correct' : 'feedback-incorrect'}`;
+            feedbackDiv.innerHTML = isCorrect ? 
+                '✅ Corect! Răspuns bun!' : 
+                `❌ Incorect! Răspunsul corect este: ${correctAnswer.toUpperCase()}) ${question.options[correctAnswer]}`;
+            
+            document.querySelector('.question-card').appendChild(feedbackDiv);
+        }
+
+        // Navigate to previous question
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                displayQuestion();
+            }
+        }
+
+        // Navigate to next question
+        function nextQuestion() {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                displayQuestion();
+            }
+        }
+
+        // Show finish modal
+        function finishTest() {
+            const answeredCount = Object.keys(userAnswers).length;
+            document.getElementById('answered-count').textContent = answeredCount;
+            document.getElementById('total-count').textContent = questions.length;
+            document.getElementById('finish-modal').classList.add('active');
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('finish-modal').classList.remove('active');
+        }
+
+        // Confirm finish test
+        function confirmFinishTest() {
+            closeModal();
+            stopTimer();
+            calculateResults();
+            switchTab('review');
+        }
+
+        // Calculate test results
+        function calculateResults() {
+            let correctCount = 0;
+            const reviewContainer = document.getElementById('review-list');
+            reviewContainer.innerHTML = '';
+            
+            questions.forEach((question, index) => {
+                const userAnswer = userAnswers[index];
+                const isCorrect = userAnswer === question.correct_answer;
+                
+                if (isCorrect) correctCount++;
+                
+                const reviewCard = document.createElement('div');
+                reviewCard.className = 'question-card';
+                reviewCard.innerHTML = `
+                    <span class="question-number">Întrebarea #${question.number}</span>
+                    <div class="question-text">${question.question}</div>
+                    <div class="options">
+                        ${Object.entries(question.options).map(([key, value]) => {
+                            let className = 'option';
+                            if (key === question.correct_answer) className += ' correct';
+                            else if (key === userAnswer && !isCorrect) className += ' incorrect';
+                            
+                            return `
+                                <div class="${className}">
+                                    <span class="option-letter">${key.toUpperCase()}</span>
+                                    ${value}
+                                    ${key === question.correct_answer ? '<span style="float: right;">✓ Corect</span>' : ''}
+                                    ${key === userAnswer && !isCorrect ? '<span style="float: right;">✗ Răspunsul tău</span>' : ''}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                    <div style="margin-top: 15px; padding: 15px; background: ${isCorrect ? '#c6f6d5' : '#fed7d7'}; border-radius: 8px;">
+                        <strong>Status:</strong> ${isCorrect ? '✓ Corect' : '✗ Incorect'}
+                        ${!userAnswer ? ' (Fără răspuns)' : ''}
+                    </div>
+                `;
+                reviewContainer.appendChild(reviewCard);
+            });
+            
+            // Update score display
+            const percentage = Math.round((correctCount / questions.length) * 100);
+            document.getElementById('score-display').textContent = `${correctCount}/${questions.length}`;
+            document.getElementById('score-percentage').textContent = `${percentage}% Corect`;
+            
+            // Add summary statistics
+            const summaryHtml = `
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px;">
+                    <div style="text-align: center; padding: 15px; background: #c6f6d5; border-radius: 8px;">
+                        <div style="font-size: 24px; font-weight: bold; color: #276749;">${correctCount}</div>
+                        <div style="color: #22543d;">Corecte</div>
+                    </div>
+                    <div style="text-align: center; padding: 15px; background: #fed7d7; border-radius: 8px;">
+                        <div style="font-size: 24px; font-weight: bold; color: #742a2a;">${questions.length - correctCount}</div>
+                        <div style="color: #742a2a;">Incorecte</div>
+                    </div>
+                    <div style="text-align: center; padding: 15px; background: #e2e8f0; border-radius: 8px;">
+                        <div style="font-size: 24px; font-weight: bold; color: #2d3748;">${document.getElementById('timer').textContent}</div>
+                        <div style="color: #4a5568;">Timp Total</div>
+                    </div>
+                </div>
+            `;
+            
+            reviewContainer.insertAdjacentHTML('afterbegin', summaryHtml);
+        }
+
+        // Start new test
+        function startNewTest() {
+            currentQuestionIndex = 0;
+            userAnswers = {};
+            switchTab('test');
+            initializeTest();
+        }
+
+        // Switch between tabs
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(`${tabName}-section`).classList.add('active');
+            
+            // Stop timer when leaving test tab
+            if (tabName !== 'test' && timerInterval) {
+                stopTimer();
+            }
+            
+            // Stop exam timer when leaving exam tab
+            if (tabName !== 'exam45' && exam45TimerInterval) {
+                clearInterval(exam45TimerInterval);
+            }
+            
+            // Restart timer when returning to test tab
+            if (tabName === 'test' && questions.length > 0) {
+                startTimer();
+            }
+            
+            // Load all questions when switching to search tab
+            if (tabName === 'search') {
+                showAllQuestions();
+            }
+        }
+
+        // Show all questions in search section
+        function showAllQuestions() {
+            const searchResults = document.getElementById('search-results');
+            const searchStats = document.getElementById('search-stats');
+            
+            searchStats.innerHTML = `
+                <strong>📊 Total: ${questions.length} întrebări</strong>
+                <span style="margin-left: 20px;">🔍 Folosește căutarea pentru a filtra rezultatele</span>
+            `;
+            
+            searchResults.innerHTML = '';
+            
+            questions.forEach((question, index) => {
+                const questionCard = document.createElement('div');
+                questionCard.className = 'search-result-card';
+                questionCard.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <span style="background: #667eea; color: white; padding: 4px 12px; border-radius: 15px; font-size: 14px; font-weight: bold;">
+                            #${question.number}
+                        </span>
+                        <button class="btn btn-secondary" onclick="jumpToQuestionFromSearch(${index})" style="padding: 5px 10px; font-size: 12px;">
+                            Mergi la întrebare
+                        </button>
+                    </div>
+                    <div style="font-size: 16px; font-weight: 600; margin-bottom: 15px; line-height: 1.4;">
+                        ${question.question}
+                    </div>
+                    <div style="display: grid; gap: 8px;">
+                        ${Object.entries(question.options).map(([key, value]) => `
+                            <div style="padding: 8px 12px; background: ${key === question.correct_answer ? '#c6f6d5' : '#f7f9fc'}; 
+                                       border-radius: 6px; border-left: 4px solid ${key === question.correct_answer ? '#48bb78' : '#e2e8f0'};">
+                                <strong>${key.toUpperCase()})</strong> ${value}
+                                ${key === question.correct_answer ? '<span style="float: right; color: #276749;">✓ Corect</span>' : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                searchResults.appendChild(questionCard);
+            });
+        }
+
+        // Search questions function
+        function searchQuestions() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const searchResults = document.getElementById('search-results');
+            const searchStats = document.getElementById('search-stats');
+            
+            if (!searchTerm.trim()) {
+                showAllQuestions();
+                return;
+            }
+            
+            const filteredQuestions = questions.filter(question => {
+                return question.question.toLowerCase().includes(searchTerm) ||
+                       question.number.toString().includes(searchTerm) ||
+                       Object.values(question.options).some(option => 
+                           option.toLowerCase().includes(searchTerm)
+                       );
+            });
+            
+            searchStats.innerHTML = `
+                <strong>🔍 Găsite: ${filteredQuestions.length} din ${questions.length} întrebări</strong>
+                <span style="margin-left: 20px;">pentru: "${searchTerm}"</span>
+            `;
+            
+            searchResults.innerHTML = '';
+            
+            if (filteredQuestions.length === 0) {
+                searchResults.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #718096;">
+                        <p>❌ Nu s-au găsit întrebări care să conțină "${searchTerm}"</p>
+                        <button class="btn btn-secondary" onclick="showAllQuestions()" style="margin-top: 15px;">
+                            Arată toate întrebările
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            filteredQuestions.forEach((question, index) => {
+                const originalIndex = questions.findIndex(q => q.number === question.number);
+                const questionCard = document.createElement('div');
+                questionCard.className = 'search-result-card';
+                
+                // Highlight search term
+                const highlightText = (text, term) => {
+                    const regex = new RegExp(`(${term})`, 'gi');
+                    return text.replace(regex, '<mark style="background: #ffd700; padding: 1px 3px; border-radius: 3px;">$1</mark>');
+                };
+                
+                questionCard.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <span style="background: #667eea; color: white; padding: 4px 12px; border-radius: 15px; font-size: 14px; font-weight: bold;">
+                            #${question.number}
+                        </span>
+                        <button class="btn btn-secondary" onclick="jumpToQuestionFromSearch(${originalIndex})" style="padding: 5px 10px; font-size: 12px;">
+                            Mergi la întrebare
+                        </button>
+                    </div>
+                    <div style="font-size: 16px; font-weight: 600; margin-bottom: 15px; line-height: 1.4;">
+                        ${highlightText(question.question, searchTerm)}
+                    </div>
+                    <div style="display: grid; gap: 8px;">
+                        ${Object.entries(question.options).map(([key, value]) => `
+                            <div style="padding: 8px 12px; background: ${key === question.correct_answer ? '#c6f6d5' : '#f7f9fc'}; 
+                                       border-radius: 6px; border-left: 4px solid ${key === question.correct_answer ? '#48bb78' : '#e2e8f0'};">
+                                <strong>${key.toUpperCase()})</strong> ${highlightText(value, searchTerm)}
+                                ${key === question.correct_answer ? '<span style="float: right; color: #276749;">✓ Corect</span>' : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                searchResults.appendChild(questionCard);
+            });
+        }
+
+        // Jump to question from search
+        function jumpToQuestionFromSearch(index) {
+            currentQuestionIndex = index;
+            switchTab('test');
+            displayQuestion();
+            showNotification(`Navigat la întrebarea #${questions[index].number}`, 'info');
+        }
+
+        // Exam 45 functions
+        function startExam45() {
+            if (questions.length < 45) {
+                showNotification(`Nu sunt suficiente întrebări! Ai doar ${questions.length} întrebări. Trebuie să ai cel puțin 45.`, 'error');
+                return;
+            }
+            
+            // Select random 45 questions
+            const shuffled = [...questions].sort(() => 0.5 - Math.random());
+            exam45Questions = shuffled.slice(0, 45);
+            exam45CurrentIndex = 0;
+            exam45Answers = {};
+            exam45Timer = 0;
+            
+            // Show exam interface
+            document.getElementById('exam45-instructions').style.display = 'none';
+            document.getElementById('start-exam-btn').style.display = 'none';
+            document.getElementById('exam45-controls').style.display = 'flex';
+            document.getElementById('exam45-progress').style.display = 'block';
+            document.getElementById('exam45-question-card').style.display = 'block';
+            document.getElementById('exam45-navigation').style.display = 'flex';
+            
+            // Start timer
+            exam45TimerInterval = setInterval(() => {
+                exam45Timer++;
+                const minutes = Math.floor(exam45Timer / 60);
+                const secs = exam45Timer % 60;
+                document.getElementById('exam45-timer').textContent = 
+                    `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            }, 1000);
+            
+            displayExam45Question();
+            showNotification('Test cu 45 întrebări început! Mult succes!', 'success');
+        }
+
+        function displayExam45Question() {
+            const question = exam45Questions[exam45CurrentIndex];
+            document.getElementById('exam45-current').textContent = exam45CurrentIndex + 1;
+            document.getElementById('exam45-question-number').textContent = `Întrebarea #${question.number}`;
+            document.getElementById('exam45-question-text').textContent = question.question;
+            
+            // Update progress
+            const progress = ((exam45CurrentIndex + 1) / 45) * 100;
+            document.getElementById('exam45-progress-fill').style.width = `${progress}%`;
+            
+            // Display options
+            const optionsContainer = document.getElementById('exam45-options-container');
+            optionsContainer.innerHTML = '';
+            
+            for (let key in question.options) {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.onclick = () => selectExam45Option(key);
+                
+                if (exam45Answers[exam45CurrentIndex] === key) {
+                    optionDiv.classList.add('selected');
+                }
+                
+                optionDiv.innerHTML = `
+                    <span class="option-letter">${key.toUpperCase()}</span>
+                    ${question.options[key]}
+                `;
+                
+                optionsContainer.appendChild(optionDiv);
+            }
+            
+            // Update navigation buttons
+            document.getElementById('exam45-prev-btn').disabled = exam45CurrentIndex === 0;
+            
+            if (exam45CurrentIndex === 44) {
+                document.getElementById('exam45-next-btn').style.display = 'none';
+                document.getElementById('exam45-finish-btn').style.display = 'inline-block';
+            } else {
+                document.getElementById('exam45-next-btn').style.display = 'inline-block';
+                document.getElementById('exam45-finish-btn').style.display = 'none';
+            }
+        }
+
+        function selectExam45Option(option) {
+            exam45Answers[exam45CurrentIndex] = option;
+            
+            // Update visual selection
+            document.querySelectorAll('#exam45-options-container .option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            document.querySelectorAll('#exam45-options-container .option')[['a', 'b', 'c'].indexOf(option)].classList.add('selected');
+        }
+
+        function exam45Previous() {
+            if (exam45CurrentIndex > 0) {
+                exam45CurrentIndex--;
+                displayExam45Question();
+            }
+        }
+
+        function exam45Next() {
+            if (exam45CurrentIndex < 44) {
+                exam45CurrentIndex++;
+                displayExam45Question();
+            }
+        }
+
+        function exam45Finish() {
+            clearInterval(exam45TimerInterval);
+            
+            // Calculate results
+            let correctCount = 0;
+            exam45Questions.forEach((question, index) => {
+                const userAnswer = exam45Answers[index];
+                if (userAnswer === question.correct_answer) {
+                    correctCount++;
+                }
+            });
+            
+            const percentage = Math.round((correctCount / 45) * 100);
+            const minutes = Math.floor(exam45Timer / 60);
+            const secs = exam45Timer % 60;
+            const timeStr = `${minutes}:${secs.toString().padStart(2, '0')}`;
+            
+            // Show results
+            alert(`Test finalizat!\n\nRezultat: ${correctCount}/45 (${percentage}%)\nTimp: ${timeStr}\n\nMergi la secțiunea "Revizuire" pentru detalii.`);
+            
+            // Reset exam interface
+            document.getElementById('exam45-instructions').style.display = 'block';
+            document.getElementById('start-exam-btn').style.display = 'inline-block';
+            document.getElementById('exam45-controls').style.display = 'none';
+            document.getElementById('exam45-progress').style.display = 'none';
+            document.getElementById('exam45-question-card').style.display = 'none';
+            document.getElementById('exam45-navigation').style.display = 'none';
+            
+            // Save results to review section (optional)
+            // You can implement this to show exam45 results in review section
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(event) {
+            if (document.getElementById('test-section').classList.contains('active')) {
+                switch(event.key) {
+                    case 'ArrowLeft':
+                        if (currentQuestionIndex > 0) previousQuestion();
+                        break;
+                    case 'ArrowRight':
+                        if (currentQuestionIndex < questions.length - 1) nextQuestion();
+                        break;
+                    case '1':
+                    case 'a':
+                    case 'A':
+                        selectOption('a');
+                        break;
+                    case '2':
+                    case 'b':
+                    case 'B':
+                        selectOption('b');
+                        break;
+                    case '3':
+                    case 'c':
+                    case 'C':
+                        selectOption('c');
+                        break;
+                    case 'Enter':
+                        if (currentQuestionIndex === questions.length - 1) {
+                            finishTest();
+                        } else {
+                            nextQuestion();
+                        }
+                        break;
+                }
+            }
+        });
+
+        // Quick jump to question
+        function jumpToQuestion(index) {
+            currentQuestionIndex = index;
+            displayQuestion();
+        }
+
+        // Generate question navigator (optional feature)
+        function generateQuestionNavigator() {
+            const navigator = document.createElement('div');
+            navigator.style.cssText = `
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+                margin-bottom: 20px;
+            `;
+            
+            questions.forEach((_, index) => {
+                const button = document.createElement('button');
+                button.textContent = index + 1;
+                button.className = 'btn btn-secondary';
+                button.style.cssText = `
+                    width: 40px;
+                    height: 40px;
+                    padding: 0;
+                    font-size: 14px;
+                `;
+                
+                if (userAnswers[index]) {
+                    button.style.background = '#667eea';
+                    button.style.color = 'white';
+                }
+                
+                if (index === currentQuestionIndex) {
+                    button.style.border = '2px solid #667eea';
+                }
+                
+                button.onclick = () => jumpToQuestion(index);
+                navigator.appendChild(button);
+            });
+            
+            return navigator;
+        }
+
+        // Import questions from file input (additional feature)
+        function importQuestionsFromFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (Array.isArray(imported)) {
+                        questions = imported;
+                        localStorage.setItem('questions', JSON.stringify(questions));
+                        initializeTest();
+                        showNotification(`${imported.length} întrebări importate cu succes!`, 'success');
+                    } else {
+                        showNotification('Format invalid! Fișierul trebuie să conțină un array de întrebări.', 'error');
+                    }
+                } catch (error) {
+                    showNotification('Eroare la parsarea fișierului JSON!', 'error');
+                    console.error(error);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // Shuffle questions for random test
+        function shuffleQuestions() {
+            for (let i = questions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [questions[i], questions[j]] = [questions[j], questions[i]];
+            }
+            initializeTest();
+            showNotification('Întrebările au fost amestecate!', 'success');
+        }
+
+        // Filter questions by range
+        function filterQuestionsByRange(start, end) {
+            const filtered = questions.filter(q => q.number >= start && q.number <= end);
+            if (filtered.length > 0) {
+                questions = filtered;
+                initializeTest();
+                showNotification(`Filtrat: ${filtered.length} întrebări între #${start} și #${end}`, 'success');
+            } else {
+                showNotification('Nu s-au găsit întrebări în acest interval!', 'warning');
+            }
+        }
+
+        // Reset all data
+        function resetAllData() {
+            if (confirm('Ești sigur că vrei să ștergi toate datele salvate?')) {
+                localStorage.clear();
+                questions = [];
+                userAnswers = {};
+                currentQuestionIndex = 0;
+                location.reload();
+            }
+        }
+
+        // Statistics tracking
+        function getStatistics() {
+            const stats = JSON.parse(localStorage.getItem('testStatistics')) || [];
+            return stats;
+        }
+
+        function saveTestResult() {
+            const stats = getStatistics();
+            const correctCount = questions.filter((q, i) => userAnswers[i] === q.correct_answer).length;
+            
+            stats.push({
+                date: new Date().toISOString(),
+                totalQuestions: questions.length,
+                correctAnswers: correctCount,
+                percentage: Math.round((correctCount / questions.length) * 100),
+                timeSpent: seconds
+            });
+            
+            localStorage.setItem('testStatistics', JSON.stringify(stats));
+        }
+
+        // Add question function
+        function addQuestion() {
+            const number = document.getElementById('add-number').value;
+            const questionText = document.getElementById('add-question').value;
+            const optionA = document.getElementById('add-option-a').value;
+            const optionB = document.getElementById('add-option-b').value;
+            const optionC = document.getElementById('add-option-c').value;
+            const correct = document.getElementById('add-correct').value;
+            
+            if (!number || !questionText || !optionA || !optionB || !optionC) {
+                showNotification('Te rog completează toate câmpurile!', 'error');
+                return;
+            }
+            
+            // Check if question number already exists
+            if (questions.find(q => q.number == number)) {
+                showNotification(`Întrebarea cu numărul ${number} există deja!`, 'error');
+                return;
+            }
+            
+            const newQuestion = {
+                number: parseInt(number),
+                question: questionText.trim(),
+                options: {
+                    a: optionA.trim(),
+                    b: optionB.trim(),
+                    c: optionC.trim()
+                },
+                correct_answer: correct
+            };
+            
+            questions.push(newQuestion);
+            questions.sort((a, b) => a.number - b.number); // Sort by number
+            
+            // Save to localStorage
+            localStorage.setItem('questions', JSON.stringify(questions));
+            
+            // Clear form
+            document.getElementById('add-number').value = '';
+            document.getElementById('add-question').value = '';
+            document.getElementById('add-option-a').value = '';
+            document.getElementById('add-option-b').value = '';
+            document.getElementById('add-option-c').value = '';
+            document.getElementById('add-correct').value = 'a';
+            
+            // Update test
+            if (document.getElementById('test-section').classList.contains('active')) {
+                initializeTest();
+            }
+            
+            showNotification(`Întrebarea #${number} a fost adăugată cu succes!`, 'success');
+        }
+
+        // Export questions function
+        function exportQuestions() {
+            if (questions.length === 0) {
+                showNotification('Nu există întrebări de exportat!', 'error');
+                return;
+            }
+            
+            const dataStr = JSON.stringify(questions, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = 'questions.json';
+            link.click();
+            
+            showNotification(`${questions.length} întrebări exportate în questions.json!`, 'success');
+        }
+    </script>
