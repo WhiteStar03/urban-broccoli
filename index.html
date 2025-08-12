@@ -1141,12 +1141,12 @@
                             <label>Numărul de întrebări</label>
                             <select class="setting-input" id="custom-question-count">
                                 <option value="10">10 întrebări</option>
-                                <option value="15">15 întrebări</option>
                                 <option value="20">20 întrebări</option>
-                                <option value="25">25 întrebări</option>
                                 <option value="30">30 întrebări</option>
-                                <option value="45" selected>45 întrebări</option>
+                                <option value="40">40 întrebări</option>
                                 <option value="50">50 întrebări</option>
+                                <option value="60" selected>60 întrebări</option>
+                                <option value="70">70 întrebări</option>
                                 <option value="all">Toate întrebările</option>
                             </select>
                         </div>
@@ -1202,6 +1202,9 @@
                         </div>
                         <div class="options" id="custom-options-container">
                             <!-- Options will be inserted here -->
+                        </div>
+                        <div id="custom-next-button-container" style="text-align: center; margin-top: 20px;">
+                            <!-- Next button will be inserted here when answer is selected -->
                         </div>
                     </div>
 
@@ -1277,7 +1280,7 @@
                     
                     <!-- Sort Toggle Button -->
                     <button class="btn btn-secondary" onclick="toggleSort()" id="sort-toggle-btn" style="margin-left: 10px;">
-                        📊 Sortează după Index
+                        🔤 Sortează Alfabetic
                     </button>
                 </div>
                 <div class="search-stats" id="search-stats" style="margin-bottom: 20px; padding: 10px; background: #f7f9fc; border-radius: 8px; text-align: center;">
@@ -1289,7 +1292,7 @@
             </div>
 
             <!-- Exam 45 Section -->
-            <div id="exam45-section" class="section">
+            <div id="exam45-section" class="section">asiguratul
                 <div class="exam-controls">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                         <h2>📝 Test cu 45 de Întrebări</h2>
@@ -1402,7 +1405,7 @@
         let practiceAnswered = false;
 
         // Search section sorting
-        let sortByIndex = true; // true = sort by index (number), false = sort alphabetically
+        let sortByIndex = false; // true = sort by index (number), false = sort alphabetically (default: alphabetical)
 
         // Statistics
         let testStatistics = JSON.parse(localStorage.getItem('testStatistics')) || [];
@@ -2612,13 +2615,17 @@
                 opt.style.opacity = '0.6';
             });
             
+            // Update next button visibility
+            updateNextButton();
+            
             // Show timeout message
             showNotification('⏰ Timpul a expirat pentru această întrebare!', 'warning');
             
             // Auto-advance to next question after a short delay
             setTimeout(() => {
                 if (customCurrentIndex < customTestQuestions.length - 1) {
-                    nextCustomQuestion();
+                    customCurrentIndex++;
+                    displayCustomQuestion();
                 } else {
                     // If this was the last question, finish the test
                     finishCustomTest();
@@ -2632,6 +2639,9 @@
 
         function displayCustomQuestion() {
             if (customTestQuestions.length === 0) return;
+            
+            // Start question timer first to reset state
+            startQuestionTimer();
             
             const question = customTestQuestions[customCurrentIndex];
             document.getElementById('custom-current-question').textContent = customCurrentIndex + 1;
@@ -2650,14 +2660,11 @@
                 const optionDiv = document.createElement('div');
                 optionDiv.className = 'option';
                 
-                // Check if answering is disabled for this question
-                if (!isAnsweringDisabled) {
-                    optionDiv.onclick = () => selectCustomOption(key);
-                    optionDiv.style.cursor = 'pointer';
-                } else {
-                    optionDiv.style.pointerEvents = 'none';
-                    optionDiv.style.opacity = '0.6';
-                }
+                // Options are always clickable when displaying new question
+                optionDiv.onclick = () => selectCustomOption(key);
+                optionDiv.style.cursor = 'pointer';
+                optionDiv.style.pointerEvents = 'auto';
+                optionDiv.style.opacity = '1';
                 
                 if (customAnswers[customCurrentIndex] === key) {
                     optionDiv.classList.add('selected');
@@ -2671,20 +2678,16 @@
                 optionsContainer.appendChild(optionDiv);
             }
             
-            // Update navigation buttons - removed for fixed 1-minute timer mode
-            
-            // Start question timer for new question
-            startQuestionTimer();
+            // Add next button if answer is selected
+            updateNextButton();
         }
 
         function selectCustomOption(option) {
-            // Ignore clicks if answering is disabled
+            // Ignore clicks if answering is disabled (time expired)
             if (isAnsweringDisabled) return;
             
+            // Allow changing answer - don't disable answering or stop timer
             customAnswers[customCurrentIndex] = option;
-            
-            // Stop the question timer since user answered
-            stopQuestionTimer();
             
             // Update visual selection
             document.querySelectorAll('#custom-options-container .option').forEach(opt => {
@@ -2693,28 +2696,44 @@
             
             document.querySelectorAll('#custom-options-container .option')[['a', 'b', 'c'].indexOf(option)].classList.add('selected');
             
-            // Disable further clicking on options
-            isAnsweringDisabled = true;
-            document.querySelectorAll('#custom-options-container .option').forEach(opt => {
-                opt.style.pointerEvents = 'none';
-                opt.style.opacity = '0.8';
-            });
+            // Show feedback that answer was selected (can be changed)
+            showNotification(`Răspuns selectat: ${option.toUpperCase()} - Poți schimba până expiră timpul`, 'success');
             
-            // Show feedback that answer was selected
-            showNotification(`Răspuns selectat: ${option.toUpperCase()}`, 'success');
+            // Update next button visibility
+            updateNextButton();
             
-            // Auto-advance to next question after short delay
-            setTimeout(() => {
-                if (customCurrentIndex < customTestQuestions.length - 1) {
-                    nextCustomQuestion();
-                } else {
-                    // If this was the last question, finish the test
-                    finishCustomTest();
-                }
-            }, 1500); // 1.5 second delay
+            // Don't disable options or auto-advance - let user change answer until time expires
         }
 
         // Navigator and flag functions removed - not needed for fixed 1-minute timer mode
+
+        function updateNextButton() {
+            const nextButtonContainer = document.getElementById('custom-next-button-container');
+            const hasAnswer = customAnswers[customCurrentIndex] !== undefined;
+            
+            if (hasAnswer && !isAnsweringDisabled) {
+                nextButtonContainer.innerHTML = `
+                    <button class="nav-btn primary" onclick="manualNextCustomQuestion()" style="margin-top: 15px;">
+                        ➡️ Următoarea întrebare
+                    </button>
+                `;
+            } else {
+                nextButtonContainer.innerHTML = '';
+            }
+        }
+
+        function manualNextCustomQuestion() {
+            // Stop current question timer
+            clearInterval(questionTimerInterval);
+            
+            // Move to next question
+            if (customCurrentIndex < customTestQuestions.length - 1) {
+                customCurrentIndex++;
+                displayCustomQuestion();
+            } else {
+                finishCustomTest();
+            }
+        }
 
         function pauseCustomTest() {
             const pauseBtn = document.getElementById('custom-pause-btn');
@@ -2753,31 +2772,8 @@
             }
         }
 
-        function previousCustomQuestion() {
-            // Don't allow manual navigation if still in active answering period
-            if (!isAnsweringDisabled && questionTimer > 0) {
-                showNotification('Nu poți naviga manual în timp ce întrebarea este activă!', 'warning');
-                return;
-            }
-            
-            if (customCurrentIndex > 0) {
-                customCurrentIndex--;
-                displayCustomQuestion();
-            }
-        }
-
-        function nextCustomQuestion() {
-            // Don't allow manual navigation if still in active answering period  
-            if (!isAnsweringDisabled && questionTimer > 0) {
-                showNotification('Nu poți naviga manual în timp ce întrebarea este activă!', 'warning');
-                return;
-            }
-            
-            if (customCurrentIndex < customTestQuestions.length - 1) {
-                customCurrentIndex++;
-                displayCustomQuestion();
-            }
-        }
+        // Navigation functions removed - not needed for fixed 1-minute timer mode
+        // Questions automatically advance after timer expires or use manual next button
 
         function finishCustomTest() {
             clearInterval(customTimerInterval);
