@@ -1522,6 +1522,16 @@
             }
             
             browseCurrentIndex = 0;
+            
+            // Reset to study mode by default
+            isStudyMode = true;
+            practiceAnswers = {};
+            practiceAnswered = false;
+            
+            // Update button states to match study mode
+            document.getElementById('study-mode-btn').classList.add('active');
+            document.getElementById('practice-mode-btn').classList.remove('active');
+            
             document.getElementById('browse-total').textContent = questions.length;
             document.getElementById('question-slider').max = questions.length;
             document.getElementById('question-slider').value = 1;
@@ -1533,8 +1543,10 @@
 
         // Display current question in browser mode
         function displayBrowseQuestion() {
-            // Reset practice state for new question
-            practiceAnswered = false;
+            // Reset practice state for new question only in practice mode
+            if (!isStudyMode) {
+                practiceAnswered = false;
+            }
             
             if (questions.length === 0) {
                 document.getElementById('browse-question-text').textContent = 'Nu există întrebări disponibile.';
@@ -1706,6 +1718,10 @@
             document.getElementById('study-mode-btn').classList.add('active');
             document.getElementById('practice-mode-btn').classList.remove('active');
             
+            // Reset practice state when switching to study mode
+            practiceAnswers = {};
+            practiceAnswered = false;
+            
             // Show/hide relevant sections
             document.getElementById('browse-correct-answer').style.display = 'block';
             document.getElementById('practice-feedback').style.display = 'none';
@@ -1716,6 +1732,9 @@
                 opt.style.cursor = 'default';
                 opt.onclick = null;
             });
+            
+            // Refresh current question display
+            displayBrowseQuestion();
             
             showNotification('📖 Modul Studiu activat - Răspunsurile sunt vizibile', 'info');
         }
@@ -1728,14 +1747,17 @@
             document.getElementById('study-mode-btn').classList.remove('active');
             document.getElementById('practice-mode-btn').classList.add('active');
             
+            // Reset practice state when switching to practice mode
+            practiceAnswers = {};
+            practiceAnswered = false;
+            
             // Show/hide relevant sections
             document.getElementById('browse-correct-answer').style.display = 'none';
             document.getElementById('practice-feedback').style.display = 'none';
             document.getElementById('practice-actions').style.display = 'block';
             
-            // Reset practice state for current question
-            practiceAnswered = false;
-            practiceAnswers[browseCurrentIndex] = undefined;
+            // Refresh current question display
+            displayBrowseQuestion();
             
             // Update practice UI
             updatePracticeUI();
