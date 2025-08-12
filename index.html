@@ -909,6 +909,98 @@
                 </div>
             </div>
 
+            <!-- Quick Test Section -->
+            <div id="quicktest-section" class="section">
+                <div class="test-settings slide-in">
+                    <h3 style="margin-bottom: 20px; color: #4a5568; display: flex; align-items: center; gap: 10px;">
+                        ⚡ Test Rapid - Presetări Rapide
+                    </h3>
+                    
+                    <div class="test-mode-buttons">
+                        <button class="mode-btn" onclick="startQuickTest('sprint')">
+                            🏃‍♂️ Sprint<br><small>10 întrebări, 5 min</small>
+                        </button>
+                        <button class="mode-btn" onclick="startQuickTest('standard')">
+                            📚 Standard<br><small>25 întrebări, 20 min</small>
+                        </button>
+                        <button class="mode-btn" onclick="startQuickTest('exam')">
+                            🎓 Examen<br><small>45 întrebări, 45 min</small>
+                        </button>
+                        <button class="mode-btn" onclick="startQuickTest('marathon')">
+                            🏃‍♀️ Maraton<br><small>Toate, fără limită</small>
+                        </button>
+                        <button class="mode-btn" onclick="startQuickTest('review')">
+                            🔄 Revizuire<br><small>Întrebări greșite anterior</small>
+                        </button>
+                    </div>
+                    
+                    <div style="margin-top: 20px; padding: 15px; background: white; border-radius: 10px; border: 1px solid #e2e8f0;">
+                        <h4 style="margin-bottom: 10px;">📊 Recomandare Personalizată</h4>
+                        <p id="recommendation" style="color: #718096; font-size: 14px;">
+                            Bazat pe performanțele anterioare, îți recomandăm să începi cu testul Standard.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Section -->
+            <div id="statistics-section" class="section">
+                <h2 style="margin-bottom: 30px; color: #4a5568;">📈 Statistici Detaliate</h2>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="total-tests">0</div>
+                        <div class="stat-label">Teste Completate</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="avg-score">0%</div>
+                        <div class="stat-label">Scor Mediu</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="best-score">0%</div>
+                        <div class="stat-label">Cel Mai Bun Scor</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="total-time">0m</div>
+                        <div class="stat-label">Timp Total</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="avg-time">0m</div>
+                        <div class="stat-label">Timp Mediu/Test</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="streak">0</div>
+                        <div class="stat-label">Seria Curentă</div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px;">
+                    <div style="background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                        <h3 style="margin-bottom: 15px;">🏆 Realizări</h3>
+                        <div id="achievements">
+                            <!-- Achievements will be populated here -->
+                        </div>
+                    </div>
+                    
+                    <div style="background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                        <h3 style="margin-bottom: 15px;">📊 Progres Lunar</h3>
+                        <div id="monthly-progress">
+                            <!-- Monthly progress chart would go here -->
+                            <p style="color: #718096; text-align: center; padding: 40px 0;">
+                                Graficul de progres va fi disponibil după primul test.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 30px; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                    <h3 style="margin-bottom: 15px;">📈 Istoric Teste Recente</h3>
+                    <div id="recent-tests">
+                        <!-- Recent test history will be populated here -->
+                    </div>
+                </div>
+            </div>
+
             <!-- Search Section -->
             <div id="search-section" class="section">
                 <div class="search-box">
@@ -1061,9 +1153,25 @@
         let exam45Timer = 0;
         let exam45TimerInterval;
 
+        // New enhanced variables
+        let currentTestQuestions = [];
+        let testSettings = {
+            questionCount: 45,
+            feedbackMode: 'instant',
+            questionOrder: 'random',
+            timeLimit: 0
+        };
+        let flaggedQuestions = new Set();
+        let testStartTime = null;
+        let isPaused = false;
+        let testStatistics = JSON.parse(localStorage.getItem('testStatistics')) || [];
+        let navigatorVisible = false;
+
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             loadQuestionsFromFile();
+            loadStatistics();
+            updateRecommendation();
             
             // Add search input event listener
             document.getElementById('search-input').addEventListener('input', function() {
@@ -1079,6 +1187,399 @@
                 }
             });
         });
+
+        // Load and display statistics
+        function loadStatistics() {
+            const stats = testStatistics;
+            if (stats.length === 0) {
+                document.getElementById('total-tests').textContent = '0';
+                document.getElementById('avg-score').textContent = '0%';
+                document.getElementById('best-score').textContent = '0%';
+                document.getElementById('total-time').textContent = '0m';
+                document.getElementById('avg-time').textContent = '0m';
+                document.getElementById('streak').textContent = '0';
+                return;
+            }
+            
+            const totalTests = stats.length;
+            const avgScore = Math.round(stats.reduce((sum, test) => sum + test.percentage, 0) / totalTests);
+            const bestScore = Math.max(...stats.map(test => test.percentage));
+            const totalTime = Math.round(stats.reduce((sum, test) => sum + test.timeSpent, 0) / 60);
+            const avgTime = Math.round(totalTime / totalTests);
+            
+            // Calculate current streak
+            let streak = 0;
+            for (let i = stats.length - 1; i >= 0; i--) {
+                if (stats[i].percentage >= 70) {
+                    streak++;
+                } else {
+                    break;
+                }
+            }
+            
+            document.getElementById('total-tests').textContent = totalTests;
+            document.getElementById('avg-score').textContent = avgScore + '%';
+            document.getElementById('best-score').textContent = bestScore + '%';
+            document.getElementById('total-time').textContent = totalTime + 'm';
+            document.getElementById('avg-time').textContent = avgTime + 'm';
+            document.getElementById('streak').textContent = streak;
+            
+            // Load achievements
+            loadAchievements();
+            loadRecentTests();
+        }
+
+        function loadAchievements() {
+            const achievements = [
+                { id: 'first_test', title: '🎯 Primul Test', description: 'Completează primul test', condition: () => testStatistics.length >= 1 },
+                { id: 'perfect_score', title: '💯 Scor Perfect', description: 'Obține 100% la un test', condition: () => testStatistics.some(t => t.percentage === 100) },
+                { id: 'speed_demon', title: '⚡ Demon de Viteză', description: 'Completează un test în sub 15 minute', condition: () => testStatistics.some(t => t.timeSpent < 900) },
+                { id: 'consistent', title: '📈 Consistent', description: 'Obține peste 80% la 5 teste consecutive', condition: () => {
+                    if (testStatistics.length < 5) return false;
+                    return testStatistics.slice(-5).every(t => t.percentage >= 80);
+                }},
+                { id: 'marathon', title: '🏃 Maratonist', description: 'Completează 10 teste', condition: () => testStatistics.length >= 10 }
+            ];
+            
+            const achievementsContainer = document.getElementById('achievements');
+            achievementsContainer.innerHTML = achievements.map(achievement => {
+                const earned = achievement.condition();
+                return `
+                    <div style="display: flex; align-items: center; margin-bottom: 10px; padding: 10px; border-radius: 8px; background: ${earned ? '#c6f6d5' : '#f7f9fc'};">
+                        <span style="font-size: 24px; margin-right: 10px; ${earned ? '' : 'filter: grayscale(100%);'}">${achievement.title.split(' ')[0]}</span>
+                        <div>
+                            <div style="font-weight: 600; color: ${earned ? '#276749' : '#718096'};">${achievement.title.split(' ').slice(1).join(' ')}</div>
+                            <div style="font-size: 12px; color: #718096;">${achievement.description}</div>
+                        </div>
+                        ${earned ? '<div style="margin-left: auto; color: #276749;">✓</div>' : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function loadRecentTests() {
+            const recentContainer = document.getElementById('recent-tests');
+            const recent = testStatistics.slice(-10).reverse();
+            
+            if (recent.length === 0) {
+                recentContainer.innerHTML = '<p style="color: #718096; text-align: center; padding: 20px;">Nu există teste anterioare.</p>';
+                return;
+            }
+            
+            recentContainer.innerHTML = recent.map((test, index) => {
+                const date = new Date(test.date).toLocaleDateString('ro-RO');
+                const time = new Date(test.date).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' });
+                const duration = Math.round(test.timeSpent / 60);
+                
+                return `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #e2e8f0;">
+                        <div>
+                            <div style="font-weight: 600;">Test ${recent.length - index}</div>
+                            <div style="font-size: 12px; color: #718096;">${date} la ${time}</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-weight: 600; color: ${test.percentage >= 70 ? '#276749' : '#742a2a'};">${test.percentage}%</div>
+                            <div style="font-size: 12px; color: #718096;">${test.correctAnswers}/${test.totalQuestions} • ${duration}m</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateRecommendation() {
+            const recommendation = document.getElementById('recommendation');
+            if (testStatistics.length === 0) {
+                recommendation.textContent = 'Bun venit! Îți recomandăm să începi cu testul Standard pentru a evalua nivelul tău.';
+            } else {
+                const lastTest = testStatistics[testStatistics.length - 1];
+                if (lastTest.percentage >= 80) {
+                    recommendation.textContent = 'Excelent progres! Încearcă testul Maraton pentru o provocare mai mare.';
+                } else if (lastTest.percentage >= 60) {
+                    recommendation.textContent = 'Bună performanță! Continuă cu testul Standard pentru a-ți consolida cunoștințele.';
+                } else {
+                    recommendation.textContent = 'Îți recomandăm să înveți mai mult și să începi cu testul Sprint pentru încredere.';
+                }
+            }
+        }
+
+        // Start custom test with user settings
+        function startCustomTest() {
+            if (questions.length === 0) {
+                showNotification('Nu sunt întrebări disponibile!', 'error');
+                return;
+            }
+            
+            // Get settings
+            testSettings.questionCount = document.getElementById('question-count').value;
+            testSettings.feedbackMode = document.getElementById('feedback-mode').value;
+            testSettings.questionOrder = document.getElementById('question-order').value;
+            testSettings.timeLimit = parseInt(document.getElementById('time-limit').value);
+            
+            // Prepare questions
+            let questionsToUse = [...questions];
+            
+            // Apply order
+            if (testSettings.questionOrder === 'random') {
+                questionsToUse = questionsToUse.sort(() => 0.5 - Math.random());
+            } else if (testSettings.questionOrder === 'reverse') {
+                questionsToUse = questionsToUse.reverse();
+            }
+            
+            // Apply count
+            if (testSettings.questionCount !== 'all') {
+                const count = parseInt(testSettings.questionCount);
+                if (count > questionsToUse.length) {
+                    showNotification(`Ai solicitat ${count} întrebări, dar sunt disponibile doar ${questionsToUse.length}!`, 'warning');
+                }
+                questionsToUse = questionsToUse.slice(0, Math.min(count, questionsToUse.length));
+            }
+            
+            currentTestQuestions = questionsToUse;
+            currentQuestionIndex = 0;
+            userAnswers = {};
+            flaggedQuestions.clear();
+            
+            // Set feedback mode
+            showFeedback = testSettings.feedbackMode === 'instant';
+            
+            // Show test interface
+            document.querySelector('.test-settings').style.display = 'none';
+            document.getElementById('test-interface').style.display = 'block';
+            
+            // Initialize test
+            document.getElementById('total-questions').textContent = currentTestQuestions.length;
+            displayCustomQuestion();
+            startCustomTimer();
+            generateNavigator();
+            
+            // Set mode indicator
+            document.getElementById('test-mode-indicator').textContent = `Test Personalizat (${currentTestQuestions.length} întrebări)`;
+            
+            testStartTime = new Date();
+            showNotification('Test personalizat început!', 'success');
+        }
+
+        function startCustomTimer() {
+            clearInterval(timerInterval);
+            seconds = 0;
+            timerInterval = setInterval(() => {
+                if (!isPaused) {
+                    seconds++;
+                    updateTimerDisplay();
+                    
+                    // Check time limit
+                    if (testSettings.timeLimit > 0 && seconds >= testSettings.timeLimit * 60) {
+                        finishTest();
+                        showNotification('Timpul a expirat! Testul a fost finalizat automat.', 'warning');
+                    }
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            const timeStr = `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            
+            document.getElementById('timer').textContent = timeStr;
+            
+            // Add urgency color if time limit is set
+            if (testSettings.timeLimit > 0) {
+                const timeLeft = testSettings.timeLimit * 60 - seconds;
+                const timer = document.getElementById('timer');
+                if (timeLeft <= 300) { // Last 5 minutes
+                    timer.style.color = '#e53e3e';
+                } else if (timeLeft <= 600) { // Last 10 minutes
+                    timer.style.color = '#ed8936';
+                } else {
+                    timer.style.color = '#4a5568';
+                }
+            }
+        }
+
+        function displayCustomQuestion() {
+            if (currentTestQuestions.length === 0) return;
+            
+            const question = currentTestQuestions[currentQuestionIndex];
+            document.getElementById('current-question').textContent = currentQuestionIndex + 1;
+            document.getElementById('question-number').textContent = `Întrebarea #${question.number}`;
+            document.getElementById('question-text').textContent = question.question;
+            
+            // Update progress
+            const progress = ((currentQuestionIndex + 1) / currentTestQuestions.length) * 100;
+            document.getElementById('progress-fill').style.width = `${progress}%`;
+            
+            // Remove any existing feedback
+            const existingFeedback = document.querySelector('.feedback-message');
+            if (existingFeedback) {
+                existingFeedback.remove();
+            }
+            
+            // Display options
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+            
+            for (let key in question.options) {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.onclick = () => selectCustomOption(key);
+                
+                if (userAnswers[currentQuestionIndex] === key) {
+                    optionDiv.classList.add('selected');
+                    if (showFeedback) {
+                        setTimeout(() => showAnswerFeedback(key), 100);
+                    }
+                }
+                
+                optionDiv.innerHTML = `
+                    <span class="option-letter">${key.toUpperCase()}</span>
+                    ${question.options[key]}
+                `;
+                
+                optionsContainer.appendChild(optionDiv);
+            }
+            
+            // Update navigation buttons
+            document.getElementById('prev-btn').disabled = currentQuestionIndex === 0;
+            
+            if (currentQuestionIndex === currentTestQuestions.length - 1) {
+                document.getElementById('next-btn').style.display = 'none';
+                document.getElementById('finish-btn').style.display = 'inline-block';
+            } else {
+                document.getElementById('next-btn').style.display = 'inline-block';
+                document.getElementById('finish-btn').style.display = 'none';
+            }
+            
+            // Update navigator
+            updateNavigator();
+            
+            // Update flag button
+            const flagBtn = document.getElementById('flag-btn');
+            if (flaggedQuestions.has(currentQuestionIndex)) {
+                flagBtn.classList.add('active');
+                flagBtn.innerHTML = '🚩 Șterge Marcaj';
+            } else {
+                flagBtn.classList.remove('active');
+                flagBtn.innerHTML = '🚩 Marchează';
+            }
+        }
+
+        function selectCustomOption(option) {
+            userAnswers[currentQuestionIndex] = option;
+            
+            // Update visual selection
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            document.querySelectorAll('.option')[['a', 'b', 'c'].indexOf(option)].classList.add('selected');
+            
+            // Show instant feedback if enabled
+            if (showFeedback) {
+                showAnswerFeedback(option);
+            }
+            
+            // Update navigator
+            updateNavigator();
+        }
+
+        function generateNavigator() {
+            const navigatorGrid = document.getElementById('navigator-grid');
+            navigatorGrid.innerHTML = '';
+            
+            currentTestQuestions.forEach((_, index) => {
+                const navBtn = document.createElement('div');
+                navBtn.className = 'nav-question';
+                navBtn.textContent = index + 1;
+                navBtn.onclick = () => jumpToQuestion(index);
+                navigatorGrid.appendChild(navBtn);
+            });
+        }
+
+        function updateNavigator() {
+            const navQuestions = document.querySelectorAll('.nav-question');
+            navQuestions.forEach((btn, index) => {
+                btn.className = 'nav-question';
+                
+                if (index === currentQuestionIndex) {
+                    btn.classList.add('current');
+                } else if (userAnswers[index] !== undefined) {
+                    btn.classList.add('answered');
+                }
+                
+                if (flaggedQuestions.has(index)) {
+                    btn.classList.add('flagged');
+                }
+            });
+        }
+
+        function jumpToQuestion(index) {
+            currentQuestionIndex = index;
+            displayCustomQuestion();
+        }
+
+        function toggleNavigator() {
+            const navigator = document.getElementById('question-navigator');
+            const btn = document.getElementById('navigator-btn');
+            
+            navigatorVisible = !navigatorVisible;
+            navigator.style.display = navigatorVisible ? 'block' : 'none';
+            btn.classList.toggle('active');
+        }
+
+        function flagQuestion() {
+            if (flaggedQuestions.has(currentQuestionIndex)) {
+                flaggedQuestions.delete(currentQuestionIndex);
+            } else {
+                flaggedQuestions.add(currentQuestionIndex);
+            }
+            
+            displayCustomQuestion(); // Refresh to update flag button
+        }
+
+        function pauseTest() {
+            const pauseBtn = document.getElementById('pause-btn');
+            isPaused = !isPaused;
+            
+            if (isPaused) {
+                pauseBtn.innerHTML = '▶️ Continuă';
+                pauseBtn.classList.add('active');
+                showNotification('Test pus în pauză', 'info');
+            } else {
+                pauseBtn.innerHTML = '⏸️ Pauză';
+                pauseBtn.classList.remove('active');
+                showNotification('Test reluat', 'info');
+            }
+        }
+
+        // Quick test presets
+        function startQuickTest(mode) {
+            if (questions.length === 0) {
+                showNotification('Nu sunt întrebări disponibile!', 'error');
+                return;
+            }
+            
+            const presets = {
+                sprint: { count: 10, timeLimit: 5, feedback: 'instant' },
+                standard: { count: 25, timeLimit: 20, feedback: 'instant' },
+                exam: { count: 45, timeLimit: 45, feedback: 'end' },
+                marathon: { count: 'all', timeLimit: 0, feedback: 'instant' },
+                review: { count: 20, timeLimit: 0, feedback: 'instant', onlyMistakes: true }
+            };
+            
+            const preset = presets[mode];
+            if (!preset) return;
+            
+            // Set preset values
+            document.getElementById('question-count').value = preset.count;
+            document.getElementById('feedback-mode').value = preset.feedback;
+            document.getElementById('question-order').value = 'random';
+            document.getElementById('time-limit').value = preset.timeLimit;
+            
+            // Switch to test tab and start
+            switchTab('test');
+            setTimeout(() => startCustomTest(), 100);
+        }
 
         // Load questions from JSON file
         async function loadQuestionsFromFile() {
@@ -1166,22 +1667,20 @@
 
         // Initialize test
         function initializeTest() {
+            // Reset to settings panel
+            document.querySelector('.test-settings').style.display = 'block';
+            document.getElementById('test-interface').style.display = 'none';
+            
             currentQuestionIndex = 0;
             userAnswers = {};
-            document.getElementById('total-questions').textContent = questions.length;
-            document.getElementById('total-count').textContent = questions.length;
+            flaggedQuestions.clear();
+            navigatorVisible = false;
             
             if (questions.length > 0) {
-                displayQuestion();
-                startTimer();
+                document.getElementById('start-custom-test').disabled = false;
+                updateRecommendation();
             } else {
-                document.getElementById('question-text').innerHTML = `
-                    <div style="text-align: center; color: #718096;">
-                        <p>📂 Nu există întrebări încărcate.</p>
-                        <p style="margin-top: 10px; font-size: 14px;">Adaugă un fișier <code>questions.json</code> în directorul aplicației sau adaugă întrebări manual din tab-ul "Adaugă Întrebări".</p>
-                    </div>
-                `;
-                document.getElementById('options-container').innerHTML = '';
+                document.getElementById('start-custom-test').disabled = true;
             }
         }
 
@@ -1204,85 +1703,35 @@
             clearInterval(timerInterval);
         }
 
-        // Display current question
+        // Display current question (kept for backward compatibility)
         function displayQuestion() {
-            if (questions.length === 0) {
-                document.getElementById('question-text').textContent = 'Nu există întrebări. Adaugă întrebări pentru a începe.';
-                return;
-            }
+            displayCustomQuestion();
+        }
 
-            const question = questions[currentQuestionIndex];
-            document.getElementById('current-question').textContent = currentQuestionIndex + 1;
-            document.getElementById('question-number').textContent = `Întrebarea #${question.number}`;
-            document.getElementById('question-text').textContent = question.question;
-            
-            // Update progress
-            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
-            document.getElementById('progress-fill').style.width = `${progress}%`;
-            
-            // Remove any existing feedback
-            const existingFeedback = document.querySelector('.feedback-message');
-            if (existingFeedback) {
-                existingFeedback.remove();
-            }
-            
-            // Display options
-            const optionsContainer = document.getElementById('options-container');
-            optionsContainer.innerHTML = '';
-            
-            for (let key in question.options) {
-                const optionDiv = document.createElement('div');
-                optionDiv.className = 'option';
-                optionDiv.onclick = () => selectOption(key);
-                
-                if (userAnswers[currentQuestionIndex] === key) {
-                    optionDiv.classList.add('selected');
-                    // Show feedback again if answer was already selected
-                    if (showFeedback) {
-                        setTimeout(() => showAnswerFeedback(key), 100);
-                    }
-                }
-                
-                optionDiv.innerHTML = `
-                    <span class="option-letter">${key.toUpperCase()}</span>
-                    ${question.options[key]}
-                `;
-                
-                optionsContainer.appendChild(optionDiv);
-            }
-            
-            // Update navigation buttons
-            document.getElementById('prev-btn').disabled = currentQuestionIndex === 0;
-            
-            if (currentQuestionIndex === questions.length - 1) {
-                document.getElementById('next-btn').style.display = 'none';
-                document.getElementById('finish-btn').style.display = 'inline-block';
-            } else {
-                document.getElementById('next-btn').style.display = 'inline-block';
-                document.getElementById('finish-btn').style.display = 'none';
+        // Navigate to previous question (updated)
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                displayCustomQuestion();
             }
         }
 
-        // Select an option
+        // Navigate to next question (updated)
+        function nextQuestion() {
+            if (currentQuestionIndex < currentTestQuestions.length - 1) {
+                currentQuestionIndex++;
+                displayCustomQuestion();
+            }
+        }
+
+        // Select an option (updated for custom test)
         function selectOption(option) {
-            userAnswers[currentQuestionIndex] = option;
-            
-            // Update visual selection
-            document.querySelectorAll('.option').forEach(opt => {
-                opt.classList.remove('selected');
-            });
-            
-            document.querySelectorAll('.option')[['a', 'b', 'c'].indexOf(option)].classList.add('selected');
-            
-            // Show instant feedback if enabled
-            if (showFeedback) {
-                showAnswerFeedback(option);
-            }
+            selectCustomOption(option);
         }
 
-        // Show answer feedback
+        // Show answer feedback (enhanced)
         function showAnswerFeedback(selectedOption) {
-            const question = questions[currentQuestionIndex];
+            const question = currentTestQuestions[currentQuestionIndex];
             const correctAnswer = question.correct_answer;
             const isCorrect = selectedOption === correctAnswer;
             
@@ -1291,6 +1740,10 @@
             if (existingFeedback) {
                 existingFeedback.remove();
             }
+            
+            // Only show feedback based on mode
+            if (testSettings.feedbackMode === 'none') return;
+            if (testSettings.feedbackMode === 'end' && currentQuestionIndex < currentTestQuestions.length - 1) return;
             
             // Highlight correct and incorrect options
             document.querySelectorAll('.option').forEach((opt, index) => {
@@ -1304,69 +1757,55 @@
                 }
             });
             
-            // Show feedback message
+            // Show feedback message with animation
             const feedbackDiv = document.createElement('div');
-            feedbackDiv.className = `feedback-message ${isCorrect ? 'feedback-correct' : 'feedback-incorrect'}`;
+            feedbackDiv.className = `feedback-message ${isCorrect ? 'feedback-correct' : 'feedback-incorrect'} slide-in`;
             feedbackDiv.innerHTML = isCorrect ? 
-                '✅ Corect! Răspuns bun!' : 
+                '✅ Corect! Răspuns excelent!' : 
                 `❌ Incorect! Răspunsul corect este: ${correctAnswer.toUpperCase()}) ${question.options[correctAnswer]}`;
             
             document.querySelector('.question-card').appendChild(feedbackDiv);
-        }
-
-        // Navigate to previous question
-        function previousQuestion() {
-            if (currentQuestionIndex > 0) {
-                currentQuestionIndex--;
-                displayQuestion();
-            }
-        }
-
-        // Navigate to next question
-        function nextQuestion() {
-            if (currentQuestionIndex < questions.length - 1) {
-                currentQuestionIndex++;
-                displayQuestion();
-            }
+            
+            // Add pulse animation to option
+            const selectedOptionEl = document.querySelectorAll('.option')[['a', 'b', 'c'].indexOf(selectedOption)];
+            selectedOptionEl.classList.add('pulse');
+            setTimeout(() => selectedOptionEl.classList.remove('pulse'), 500);
         }
 
         // Show finish modal
         function finishTest() {
             const answeredCount = Object.keys(userAnswers).length;
             document.getElementById('answered-count').textContent = answeredCount;
-            document.getElementById('total-count').textContent = questions.length;
+            document.getElementById('total-count').textContent = currentTestQuestions.length;
             document.getElementById('finish-modal').classList.add('active');
         }
 
-        // Close modal
-        function closeModal() {
-            document.getElementById('finish-modal').classList.remove('active');
-        }
-
-        // Confirm finish test
+        // Confirm finish test (enhanced)
         function confirmFinishTest() {
             closeModal();
             stopTimer();
-            calculateResults();
+            calculateCustomResults();
+            saveTestResults();
             switchTab('review');
         }
 
-        // Calculate test results
-        function calculateResults() {
+        // Calculate test results (enhanced)
+        function calculateCustomResults() {
             let correctCount = 0;
             const reviewContainer = document.getElementById('review-list');
             reviewContainer.innerHTML = '';
             
-            questions.forEach((question, index) => {
+            currentTestQuestions.forEach((question, index) => {
                 const userAnswer = userAnswers[index];
                 const isCorrect = userAnswer === question.correct_answer;
                 
                 if (isCorrect) correctCount++;
                 
                 const reviewCard = document.createElement('div');
-                reviewCard.className = 'question-card';
+                reviewCard.className = 'question-card slide-in';
                 reviewCard.innerHTML = `
                     <span class="question-number">Întrebarea #${question.number}</span>
+                    ${flaggedQuestions.has(index) ? '<span class="difficulty-badge difficulty-medium" style="margin-left: 10px;">🚩 Marcată</span>' : ''}
                     <div class="question-text">${question.question}</div>
                     <div class="options">
                         ${Object.entries(question.options).map(([key, value]) => {
@@ -1393,40 +1832,92 @@
             });
             
             // Update score display
-            const percentage = Math.round((correctCount / questions.length) * 100);
-            document.getElementById('score-display').textContent = `${correctCount}/${questions.length}`;
+            const percentage = Math.round((correctCount / currentTestQuestions.length) * 100);
+            document.getElementById('score-display').textContent = `${correctCount}/${currentTestQuestions.length}`;
             document.getElementById('score-percentage').textContent = `${percentage}% Corect`;
             
-            // Add summary statistics
+            // Enhanced summary statistics
             const summaryHtml = `
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 20px;">
                     <div style="text-align: center; padding: 15px; background: #c6f6d5; border-radius: 8px;">
                         <div style="font-size: 24px; font-weight: bold; color: #276749;">${correctCount}</div>
                         <div style="color: #22543d;">Corecte</div>
                     </div>
                     <div style="text-align: center; padding: 15px; background: #fed7d7; border-radius: 8px;">
-                        <div style="font-size: 24px; font-weight: bold; color: #742a2a;">${questions.length - correctCount}</div>
+                        <div style="font-size: 24px; font-weight: bold; color: #742a2a;">${currentTestQuestions.length - correctCount}</div>
                         <div style="color: #742a2a;">Incorecte</div>
+                    </div>
+                    <div style="text-align: center; padding: 15px; background: #feebc8; border-radius: 8px;">
+                        <div style="font-size: 24px; font-weight: bold; color: #c05621;">${flaggedQuestions.size}</div>
+                        <div style="color: #c05621;">Marcate</div>
                     </div>
                     <div style="text-align: center; padding: 15px; background: #e2e8f0; border-radius: 8px;">
                         <div style="font-size: 24px; font-weight: bold; color: #2d3748;">${document.getElementById('timer').textContent}</div>
                         <div style="color: #4a5568;">Timp Total</div>
                     </div>
+                    <div style="text-align: center; padding: 15px; background: #bee3f8; border-radius: 8px;">
+                        <div style="font-size: 24px; font-weight: bold; color: #2b6cb0;">${Math.round(seconds / currentTestQuestions.length)}s</div>
+                        <div style="color: #2c5282;">Timp/Întrebare</div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; padding: 20px; background: ${percentage >= 70 ? '#c6f6d5' : '#fed7d7'}; border-radius: 10px; margin-bottom: 20px;">
+                    <h3 style="color: ${percentage >= 70 ? '#276749' : '#742a2a'};">
+                        ${percentage >= 90 ? '🏆 Excelent!' : percentage >= 70 ? '👍 Bun rezultat!' : percentage >= 50 ? '📚 Poți mai bine!' : '💪 Continuă să exersezi!'}
+                    </h3>
+                    <p style="margin-top: 10px; color: ${percentage >= 70 ? '#22543d' : '#742a2a'};">
+                        ${percentage >= 90 ? 'Performanță excepțională! Ești foarte bine pregătit.' : 
+                          percentage >= 70 ? 'Rezultat solid! Continuă să exersezi pentru perfecțiune.' :
+                          percentage >= 50 ? 'Progres bun, dar mai ai loc de îmbunătățire.' :
+                          'Recomandăm să studiezi mai mult și să reiei testul.'}
+                    </p>
                 </div>
             `;
             
             reviewContainer.insertAdjacentHTML('afterbegin', summaryHtml);
         }
 
-        // Start new test
-        function startNewTest() {
-            currentQuestionIndex = 0;
-            userAnswers = {};
-            switchTab('test');
-            initializeTest();
+        // Save test results to statistics
+        function saveTestResults() {
+            const correctCount = Object.keys(userAnswers).filter(index => 
+                userAnswers[index] === currentTestQuestions[index].correct_answer
+            ).length;
+            
+            const testResult = {
+                date: new Date().toISOString(),
+                totalQuestions: currentTestQuestions.length,
+                correctAnswers: correctCount,
+                percentage: Math.round((correctCount / currentTestQuestions.length) * 100),
+                timeSpent: seconds,
+                settings: { ...testSettings },
+                flaggedCount: flaggedQuestions.size
+            };
+            
+            testStatistics.push(testResult);
+            localStorage.setItem('testStatistics', JSON.stringify(testStatistics));
+            
+            // Refresh statistics display
+            loadStatistics();
+            updateRecommendation();
         }
 
-        // Switch between tabs
+        // Start new test (enhanced)
+        function startNewTest() {
+            // Reset interface
+            document.querySelector('.test-settings').style.display = 'block';
+            document.getElementById('test-interface').style.display = 'none';
+            
+            currentQuestionIndex = 0;
+            userAnswers = {};
+            flaggedQuestions.clear();
+            navigatorVisible = false;
+            isPaused = false;
+            
+            switchTab('test');
+            updateRecommendation();
+        }
+
+        // Switch between tabs (enhanced)
         function switchTab(tabName) {
             // Update tab buttons
             document.querySelectorAll('.nav-tab').forEach(tab => {
@@ -1450,15 +1941,19 @@
                 clearInterval(exam45TimerInterval);
             }
             
-            // Restart timer when returning to test tab
-            if (tabName === 'test' && questions.length > 0) {
-                startTimer();
-            }
-            
-            // Load all questions when switching to search tab
+            // Load specific content for each tab
             if (tabName === 'search') {
                 showAllQuestions();
+            } else if (tabName === 'statistics') {
+                loadStatistics();
+            } else if (tabName === 'quicktest') {
+                updateRecommendation();
             }
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('finish-modal').classList.remove('active');
         }
 
         // Show all questions in search section
